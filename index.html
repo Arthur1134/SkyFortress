@@ -238,6 +238,7 @@ fp.addEventListener('touchstart',e=>{e.preventDefault();tch.fire=true;try{audio(
   else if(state==='stageclear')nextStage()},{passive:false});
 fp.addEventListener('touchend',()=>{tch.fire=false;if(charging)relCharge()});
 bp.addEventListener('touchstart',e=>{e.preventDefault();tch.bomb=true},{passive:false});bp.addEventListener('touchend',()=>{tch.bomb=false})
+})();
 
 // Left mouse = fire (hold to charge), same as Space/Z
 const gameWrap=document.getElementById('game-wrap')||C;
