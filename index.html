@@ -12,14 +12,18 @@ canvas{display:block;background:#000;image-rendering:pixelated;image-rendering:c
 #banner{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);font-size:calc(var(--sc,3)*7px);color:#ffff80;text-shadow:2px 2px 0 #404000,0 0 10px rgba(255,255,100,.4);pointer-events:none;z-index:15;opacity:0;text-align:center;line-height:1.45;letter-spacing:1px;transition:opacity .15s}
 #banner.show{opacity:1}
 #banner.warn{color:#ff6060;text-shadow:2px 2px 0 #400000,0 0 12px rgba(255,60,60,.5);font-size:calc(var(--sc,3)*8px)}
-#overlay{position:absolute;inset:0;background:rgba(0,0,8,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:20;padding:calc(var(--sc,3)*4px) calc(var(--sc,3)*3px);overflow-y:auto}
-#overlay h2{font-size:calc(var(--sc,3)*9px);color:#f0f0a0;text-shadow:2px 2px 0 #404000,0 0 8px rgba(240,240,100,.3);margin-bottom:calc(var(--sc,3)*3px);letter-spacing:2px}
+#overlay{position:absolute;inset:0;background:rgba(0,0,8,.9);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;z-index:20;padding:calc(var(--sc,3)*5px) calc(var(--sc,3)*3px) calc(var(--sc,3)*8px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+#overlay h2{font-size:calc(var(--sc,3)*7.5px);color:#f0f0a0;text-shadow:2px 2px 0 #404000,0 0 8px rgba(240,240,100,.3);margin:calc(var(--sc,3)*2px) 0 calc(var(--sc,3)*2px);letter-spacing:2px;flex-shrink:0}
 #overlay p{font-size:calc(var(--sc,3)*5px);color:#c0c0c0;line-height:1.55;max-width:min(92%,calc(var(--sc,3)*95px))}
 #overlay .blink{margin-top:calc(var(--sc,3)*4px);font-size:calc(var(--sc,3)*5px);color:#80ff80;animation:b .75s step-end infinite}@keyframes b{50%{opacity:0}}
 #overlay .btn{display:inline-block;margin:calc(var(--sc,3)*2px) calc(var(--sc,3)*1.5px);padding:calc(var(--sc,3)*3px) calc(var(--sc,3)*5px);border:2px solid #707090;background:linear-gradient(#222238,#14142a);color:#d0d0f0;font:calc(var(--sc,3)*5px) monospace;cursor:pointer;min-width:calc(var(--sc,3)*28px)}
 #overlay .btn:hover,#overlay .btn.sel{background:linear-gradient(#404068,#282850);color:#ffffa0;border-color:#a0a0c0;box-shadow:0 0 8px rgba(160,160,200,.25)}
 #overlay .btn.locked{opacity:.35;cursor:default}
 #overlay .scores{margin-top:calc(var(--sc,3)*3px);font-size:calc(var(--sc,3)*4.5px);color:#9090b0;text-align:left}
+#overlay .panel{width:100%;max-width:min(96%,calc(var(--sc,3)*110px));margin:0 auto;flex:0 0 auto}
+#overlay .opt-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:calc(var(--sc,3)*2px) 0;font-size:calc(var(--sc,3)*4.5px);text-align:left}
+#overlay .opt-label{color:#c0c0e0;flex:1}
+#overlay .dev-tag{color:#ff8080;font-size:calc(var(--sc,3)*3.5px);letter-spacing:1px}
 #overlay[hidden],#overlay.hidden,body.playing #overlay{display:none!important;visibility:hidden!important;pointer-events:none!important;opacity:0!important}
 #splash{position:absolute;inset:0;background:#05050e;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:30;text-align:center;transition:opacity .5s}
 #splash.fade{opacity:0;pointer-events:none}
@@ -47,7 +51,7 @@ canvas{display:block;background:#000;image-rendering:pixelated;image-rendering:c
 <div id="splash"><div class="stars" id="splash-stars"></div><div class="logo">SKY FORTRESS</div><div class="tag">ULTIMATE · PIXEL SHMUP</div><div class="prompt">PRESS SPACE / CLICK / TAP</div></div>
 <div id="touch"><div class="pad" id="pad-move"></div><div class="pad" id="pad-fire"></div><div class="pad" id="pad-bomb"></div></div>
 </div>
-<div id="version-badge">v0.3.3</div>
+<div id="version-badge">v0.3.4</div>
 <div id="update-banner"><p id="update-banner-text">Update available</p><button onclick="location.reload()">RELOAD</button><button onclick="document.getElementById('update-banner').style.display='none'">LATER</button></div>
 <div id="controls">←↑↓→/WASD · SPACE/Z/LMB fire(hold=charge) · X/B bomb · P pause · M music · R slow-mo · V vol<br>
 Hangar · Graze · Charge · Boss phases · Hazards · Ranks</div>
@@ -64,7 +68,7 @@ fitCanvas();addEventListener('resize',fitCanvas);X.imageSmoothingEnabled=false;
 const $=id=>document.getElementById(id);
 const scoreEl=$('score'),comboEl=$('combo'),grazeEl=$('graze'),weaponEl=$('weapon'),livesEl=$('lives'),shieldEl=$('shield'),bombsEl=$('bombs'),stageEl=$('stage'),bannerEl=$('banner'),overlay=$('overlay'),touchLayer=$('touch'),splashEl=$('splash');
 
-const GAME_VERSION='0.3.3';
+const GAME_VERSION='0.3.4';
 const UPDATE_CHECK_URL='https://arthur1134.github.io/SkyFortress/version.json';
 function syncVersionBadge(){const el=document.getElementById('version-badge');if(el)el.textContent='v'+GAME_VERSION}
 function compareSemver(a,b){const pa=String(a).split('.').map(n=>parseInt(n,10)||0),pb=String(b).split('.').map(n=>parseInt(n,10)||0);for(let i=0;i<3;i++){const d=(pa[i]||0)-(pb[i]||0);if(d)return d>0?1:-1}return 0}
@@ -79,6 +83,14 @@ let rng=mulberry32(Date.now());
 const R=()=>rng(),RI=(a,b)=>a+Math.floor(R()*(b-a+1)),P=a=>a[Math.floor(R()*a.length)],CH=p=>R()<p;
 
 let actx=null,vol=.7,musicOn=true,mTimer=0,mStep=0;
+/* DEV ONLY — remove godMode before marketplace publish */
+let godMode=false;
+try{const _sv=_safeGet('sf_settings');if(_sv){const s=JSON.parse(_sv);if(typeof s.vol==='number')vol=s.vol;if(typeof s.musicOn==='boolean')musicOn=s.musicOn;if(s.godMode)godMode=!!s.godMode}}catch(e){}
+function saveSettings(){try{_safeSet('sf_settings',JSON.stringify({vol,musicOn,godMode}))}catch(e){}}
+function setVol(v){vol=Math.max(0,Math.min(1,v));saveSettings();try{if(actx&&actx.gain){}}catch(e){}return vol}
+function cycleVol(){vol=vol>.55?.25:vol>.08?0:.7;saveSettings();return vol}
+function volLabel(){return vol<=0?'MUTE':vol<.4?'LOW':vol<.75?'MED':'HIGH'}
+
 const mel=[0,4,7,4,9,7,4,0,5,9,12,9,7,4,0,-5],bas=[0,0,-5,-5,-7,-7,-5,-5];
 function audio(){if(!actx)actx=new(AudioContext||webkitAudioContext);if(actx.state==='suspended')actx.resume()}
 function tone(f,d,t,v,s){if(!actx)return;const n=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();o.type=t||'square';o.frequency.setValueAtTime(f,n);if(s)o.frequency.exponentialRampToValueAtTime(Math.max(20,s),n+d);g.gain.setValueAtTime((v||.08)*vol,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(actx.destination);o.start(n);o.stop(n+d+.02)}
@@ -232,7 +244,7 @@ try{audio()}catch(err){}
 if(['Space','KeyZ','KeyX','KeyB','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();
 if(state==='splash'){dismissSplash();return}
 if(e.code==='Escape'||e.code==='Backspace'){
-  if(state==='shop'||state==='help'||state==='credits'||state==='hangar'||state==='daily'){showMenu._skipDaily=true;showMenu();return}
+  if(state==='shop'||state==='help'||state==='credits'||state==='hangar'||state==='daily'||state==='options'){showMenu._skipDaily=true;showMenu();return}
 }
 if(e.code==='Space'||e.code==='KeyZ'){
   if(state==='daily'){showMenu._skipDaily=true;showMenu();return}
@@ -240,13 +252,13 @@ if(e.code==='Space'||e.code==='KeyZ'){
   if(state==='hangar'||state==='shop'){startGame();return}
   if(state==='gameover'){showMenu();return}
   if(state==='stageclear'){nextStage();return}
-  if(state==='help'||state==='credits'){showMenu._skipDaily=true;showMenu();return}
+  if(state==='help'||state==='credits'||state==='options'){showMenu._skipDaily=true;showMenu();return}
 }
 if(state==='hangar'||state==='shop')shopKey(e.code);
 if(e.code==='KeyP')togPause();
-if(e.code==='KeyM'){musicOn=!musicOn;if(state==='pause')togPause(),togPause()}
+if(e.code==='KeyM'){musicOn=!musicOn;saveSettings();if(state==='pause')togPause(),togPause();if(state==='options')showOptions()}
 if(e.code==='KeyR'&&state==='play')slow=!slow;
-if(e.code==='KeyV')vol=vol>.5?.25:vol>.1?0:.7
+if(e.code==='KeyV'){cycleVol();if(state==='pause')togPause(),togPause();if(state==='options')showOptions()}
 });
 addEventListener('keyup',e=>{keys[e.code]=false;if((e.code==='Space'||e.code==='KeyZ')&&charging)relCharge()});
 
@@ -258,7 +270,7 @@ mp.addEventListener('touchend',()=>{tch.mx=0;tch.my=0;tch.on=false});
 fp.addEventListener('touchstart',e=>{e.preventDefault();tch.fire=true;try{audio()}catch(err){}
   if(state==='splash')dismissSplash();
   else if(state==='menu'||state==='hangar'||state==='shop')startGame();
-  else if(state==='gameover'||state==='help'||state==='credits'||state==='daily'){showMenu._skipDaily=true;showMenu()}
+  else if(state==='gameover'||state==='help'||state==='credits'||state==='daily'||state==='options'){showMenu._skipDaily=true;showMenu()}
   else if(state==='stageclear')nextStage()},{passive:false});
 fp.addEventListener('touchend',()=>{tch.fire=false;if(charging)relCharge()});
 bp.addEventListener('touchstart',e=>{e.preventDefault();tch.bomb=true},{passive:false});bp.addEventListener('touchend',()=>{tch.bomb=false})
@@ -278,7 +290,7 @@ function onMouseFireDown(e){
   /* On menu screens, only blank-area click starts — not Hangar/Help/etc. */
   if(state==='menu'){startGame();return}
   if(state==='hangar'||state==='shop'){return} /* stay in hangar; use START button or Space */
-  if(state==='gameover'||state==='help'||state==='credits'){showMenu._skipDaily=true;showMenu();return}
+  if(state==='gameover'||state==='help'||state==='credits'||state==='options'){showMenu._skipDaily=true;showMenu();return}
   if(state==='stageclear'){nextStage();return}
 }
 function onMouseFireUp(e){
@@ -294,10 +306,10 @@ gameWrap.addEventListener('contextmenu',e=>e.preventDefault());
 splashEl.addEventListener('touchstart',e=>{e.preventDefault();dismissSplash()},{passive:false});
 splashEl.addEventListener('click',()=>dismissSplash());
 
-function togPause(){if(state==='play'){state='pause';ovHTML('PAUSED',`<p style="line-height:1.7">P — resume<br>M — music <b style="color:#80ff80">${musicOn?'ON':'OFF'}</b><br>R — slow-mo <b>${slow?'ON':'OFF'}</b><br>V — volume <b>${vol===0?'MUTE':vol<.5?'LOW':'HIGH'}</b></p><p style="font-size:calc(var(--sc,3)*4.5px);color:#8080a0;margin-top:6px">Seed ${seed} · ${theme.n}<br>Boss: ${bArch.n} · Credits: ${meta.cr}<br>Stage ${stage} · Combo x${combo} · Graze ${graze}</p><p class="blink">PRESS P</p>`)}else if(state==='pause'){state='play';hideOv()}}
+function togPause(){if(state==='play'){state='pause';ovHTML('PAUSED',`<p style="line-height:1.7">P — resume<br>M — music <b style="color:#80ff80">${musicOn?'ON':'OFF'}</b><br>R — slow-mo <b>${slow?'ON':'OFF'}</b><br>V — volume <b>${volLabel()}</b>${godMode?'<br><span style="color:#ff8080">DEV: UNLIMITED HEALTH</span>':''}</p><p style="font-size:calc(var(--sc,3)*4.5px);color:#8080a0;margin-top:6px">Seed ${seed} · ${theme.n}<br>Boss: ${bArch.n} · Credits: ${meta.cr}<br>Stage ${stage} · Combo x${combo} · Graze ${graze}</p><p class="blink">PRESS P</p>`)}else if(state==='pause'){state='play';hideOv()}}
 
 let hSel=0,shopTab=0;
-function showOv(){document.body.classList.remove('playing');overlay.hidden=false;overlay.classList.remove('hidden');overlay.removeAttribute('hidden');overlay.style.cssText='display:flex!important;visibility:visible;opacity:1;pointer-events:auto'}
+function showOv(){document.body.classList.remove('playing');overlay.hidden=false;overlay.classList.remove('hidden');overlay.removeAttribute('hidden');overlay.style.cssText='display:flex!important;visibility:visible;opacity:1;pointer-events:auto';try{overlay.scrollTop=0}catch(e){}}
 function ovHTML(t,b){showOv();overlay.innerHTML=`<h2>${t}</h2>${b}`}
 function hideOv(){document.body.classList.add('playing');overlay.hidden=true;overlay.classList.add('hidden');overlay.setAttribute('hidden','');overlay.style.cssText='display:none!important;visibility:hidden;opacity:0;pointer-events:none';overlay.innerHTML=''}
 function banner(t,f,warn){bannerEl.innerHTML=t.replace(/\\n/g,'<br>');bannerEl.classList.add('show');bannerEl.classList.toggle('warn',!!warn);bTimer=f}
@@ -336,6 +348,7 @@ ${dailyLine}
 <span class="btn" id="m-shop">HANGAR</span>
 </div>
 <div style="margin:4px 0">
+<span class="btn" id="m-opt">OPTIONS</span>
 <span class="btn" id="m-help">HOW TO PLAY</span>
 <span class="btn" id="m-cred">CREDITS</span>
 </div>
@@ -344,9 +357,34 @@ ${dailyLine}
 <p class="blink">SPACE / START</p>`;
   bindBtn('m-start',startGame);
   bindBtn('m-shop',showShop);
+  bindBtn('m-opt',showOptions);
   bindBtn('m-help',showHelp);
   bindBtn('m-cred',showCredits);
   bindBtn('m-diff',()=>{diff=(diff+1)%3;showMenu._skipDaily=true;showMenu()});
+}
+function showOptions(){
+  state='options';showOv();
+  const bar='█'.repeat(Math.round(vol*8))+'░'.repeat(8-Math.round(vol*8));
+  overlay.innerHTML=`<div class="panel"><h2>OPTIONS</h2>
+<div class="opt-row"><span class="opt-label">Volume</span>
+<span><span class="btn" id="vol-down">−</span> <b style="color:#ffff80">${volLabel()}</b> <span style="color:#8080a0">${bar}</span> <span class="btn" id="vol-up">+</span></div>
+<div class="opt-row"><span class="opt-label">Music</span>
+<span class="btn" id="mus-tog">${musicOn?'ON':'OFF'}</span></div>
+<div class="opt-row"><span class="opt-label">Mute all</span>
+<span class="btn" id="vol-mute">${vol<=0?'UNMUTE':'MUTE'}</span></div>
+<hr style="border:none;border-top:1px solid #303050;margin:10px 0">
+<p class="dev-tag">DEV TEST — REMOVE BEFORE PUBLISH</p>
+<div class="opt-row"><span class="opt-label">Unlimited health</span>
+<span class="btn" id="god-tog" style="${godMode?'border-color:#ff6060;color:#ffb0b0':''}">${godMode?'ON':'OFF'}</span></div>
+<p style="font-size:calc(var(--sc,3)*3.8px);color:#808090;margin-top:4px">When ON, hits do not reduce lives or shields (for playtesting).</p>
+<p style="margin-top:12px"><span class="btn" id="opt-back">BACK</span></p>
+<p class="blink">ESC / BACK</p></div>`;
+  bindBtn('vol-down',()=>{setVol(Math.max(0,vol-.125));showOptions()});
+  bindBtn('vol-up',()=>{setVol(Math.min(1,vol+.125));showOptions()});
+  bindBtn('vol-mute',()=>{setVol(vol<=0?.7:0);showOptions()});
+  bindBtn('mus-tog',()=>{musicOn=!musicOn;saveSettings();showOptions()});
+  bindBtn('god-tog',()=>{godMode=!godMode;saveSettings();showOptions()});
+  bindBtn('opt-back',()=>{showMenu._skipDaily=true;showMenu()});
 }
 function showHelp(){
   state='help';showOv();
@@ -398,7 +436,7 @@ function rShop(){
     return `<div style="margin:4px 0;font-size:calc(var(--sc,3)*4.2px)"><span class="btn ${shopTab===1&&i===hSel?'sel':''}" data-up="${i}">${u.name}</span> Lv${lv}/${u.max} ${maxed?'<span style="color:#80ff80">MAX</span>':cost+' cr'}</div>`;
   }).join('');
   showOv();
-  overlay.innerHTML=`<h2>HANGAR</h2>
+  overlay.innerHTML=`<div class="panel"><h2>HANGAR</h2>
 <p>Credits: <b style="color:#80ff80">${meta.cr}</b></p>
 <p style="margin:6px 0"><span class="btn ${shopTab===0?'sel':''}" id="tab-ships">SHIPS</span> <span class="btn ${shopTab===1?'sel':''}" id="tab-up">UPGRADES</span></p>
 ${shopTab===0?`<div style="margin:8px 0">${ships}</div>
@@ -408,12 +446,12 @@ ${un?`<span style="color:#a0a0c0">${p.desc}</span><br>SPD ${p.spd} · HP ${p.hp}
 ${un?'<span class="btn" id="sel-ship">SELECT</span>':''}
 <span class="btn" id="shop-start">▶ START</span>
 <span class="btn" id="shop-back">BACK</span></p>`:
-`<div style="margin:4px 0;text-align:left;max-width:280px">${ups}</div>
-<p style="font-size:calc(var(--sc,3)*4.2px);color:#a0a0c0">${UPGS[Math.min(hSel,UPGS.length-1)].desc}</p>
+`<div style="margin:4px 0;text-align:left;max-height:calc(var(--sc,3)*42px);overflow-y:auto;padding:2px 4px;border:1px solid #303050">${ups}</div>
+<p style="font-size:calc(var(--sc,3)*4.2px);color:#a0a0c0;margin-top:6px">${UPGS[Math.min(hSel,UPGS.length-1)].desc}</p>
 <p style="margin-top:8px"><span class="btn" id="buy-up">BUY</span>
 <span class="btn" id="shop-start">▶ START</span>
 <span class="btn" id="shop-back">BACK</span></p>`}
-<p class="blink">←→ select · TAB switch · ESC back</p>`;
+<p class="blink">←→ select · TAB switch · ESC back</p></div>`;
   overlay.querySelectorAll('[data-ship]').forEach(el=>{el.onmousedown=e=>e.stopPropagation();el.onclick=()=>{hSel=+el.dataset.ship;shopTab=0;rShop()}});
   overlay.querySelectorAll('[data-up]').forEach(el=>{el.onmousedown=e=>e.stopPropagation();el.onclick=()=>{hSel=+el.dataset.up;shopTab=1;rShop()}});
   bindBtn('tab-ships',()=>{shopTab=0;hSel=meta.sel;rShop()});
@@ -572,7 +610,7 @@ function killB(){
   const g=Math.floor(score*.02)+stage*55;meta.cr+=g;if(!meta.best||rank==='S'||(meta.best!=='S'&&rank==='A'))meta.best=rank;saveM();
   ovHTML('STAGE '+stage+' CLEAR',`<p style="line-height:1.7">${theme.n}<br>Score <b>${String(score).padStart(6,'0')}</b><br>Rank <b style="color:#ffff80;font-size:calc(var(--sc,3)*6px)">${rank}</b>${noDmg?' · <span style="color:#80ff80">NO DAMAGE</span>':''}<br>Graze ${graze} · +${g} credits</p><p class="blink">PRESS SPACE</p>`);SFX.clear();UI()}
 function cRank(){const b=score-sScore,g=graze;if(noDmg&&g>40&&b>8000)return'S';if(noDmg||(g>25&&b>5000))return'A';if(b>3000||g>15)return'B';return'C'}
-function hurt(){if(inv>0)return;noDmg=false;if(shield>0){shield--;inv=55;SFX.hurt();shake=7;hitstop=4;flash=4;UI();return}lives--;inv=95;boom(pl.x+10,pl.y+6,true);SFX.hurt();shake=12;hitstop=7;flash=8;combo=1;UI();if(lives<=0){state='gameover';const rank=cRank();saveHS(score,rank);const g=Math.floor(score*.015);meta.cr+=g;saveM();ovHTML('GAME OVER',`<p>Final Score<br><b style="font-size:calc(var(--sc,3)*7px);color:#ffff80">${String(score).padStart(6,'0')}</b><br>Rank ${rank}<br>+${g} credits</p><p style="margin-top:10px"><span class="btn" id="go-menu">MENU</span> <span class="btn" id="go-shop">HANGAR</span></p><p class="blink">SPACE — menu</p><div class="scores">${loadHS().map((e,i)=>`${i+1}. ${String(e.s).padStart(6,'0')} ${e.r||''}`).join('<br>')}</div>`);bindBtn('go-menu',()=>{showMenu._skipDaily=true;showMenu()});bindBtn('go-shop',showShop)}}
+function hurt(){if(inv>0)return;if(godMode){inv=20;SFX.hurt();shake=3;flash=2;UI();return}noDmg=false;if(shield>0){shield--;inv=55;SFX.hurt();shake=7;hitstop=4;flash=4;UI();return}lives--;inv=95;boom(pl.x+10,pl.y+6,true);SFX.hurt();shake=12;hitstop=7;flash=8;combo=1;UI();if(lives<=0){state='gameover';const rank=cRank();saveHS(score,rank);const g=Math.floor(score*.015);meta.cr+=g;saveM();ovHTML('GAME OVER',`<p>Final Score<br><b style="font-size:calc(var(--sc,3)*7px);color:#ffff80">${String(score).padStart(6,'0')}</b><br>Rank ${rank}<br>+${g} credits</p><p style="margin-top:10px"><span class="btn" id="go-menu">MENU</span> <span class="btn" id="go-shop">HANGAR</span></p><p class="blink">SPACE — menu</p><div class="scores">${loadHS().map((e,i)=>`${i+1}. ${String(e.s).padStart(6,'0')} ${e.r||''}`).join('<br>')}</div>`);bindBtn('go-menu',()=>{showMenu._skipDaily=true;showMenu()});bindBtn('go-shop',showShop)}}
 
 function startGame(){
   try{

@@ -40,3 +40,7 @@ Then storm, desert, night, arctic, volcanic. Stages are much longer.
 
 ## Bosses (v0.3.2)
 Each stage has a unique boss (Dawn Gunship, Cave Mech Bat that dives at you, Neon Tower, Storm Carrier, Sand Scarab, Shadow Raider, Ice Breaker, Magma Wyrm). Bosses have much higher HP.
+
+
+## Dev options (remove before publish)
+Options → Unlimited health is a playtest god mode stored in `sf_settings`. Strip `godMode` before marketplace release.
