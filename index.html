@@ -47,7 +47,7 @@ canvas{display:block;background:#000;image-rendering:pixelated;image-rendering:c
 <div id="splash"><div class="stars" id="splash-stars"></div><div class="logo">SKY FORTRESS</div><div class="tag">ULTIMATE · PIXEL SHMUP</div><div class="prompt">PRESS SPACE / CLICK / TAP</div></div>
 <div id="touch"><div class="pad" id="pad-move"></div><div class="pad" id="pad-fire"></div><div class="pad" id="pad-bomb"></div></div>
 </div>
-<div id="version-badge">v0.3.2</div>
+<div id="version-badge">v0.3.3</div>
 <div id="update-banner"><p id="update-banner-text">Update available</p><button onclick="location.reload()">RELOAD</button><button onclick="document.getElementById('update-banner').style.display='none'">LATER</button></div>
 <div id="controls">←↑↓→/WASD · SPACE/Z/LMB fire(hold=charge) · X/B bomb · P pause · M music · R slow-mo · V vol<br>
 Hangar · Graze · Charge · Boss phases · Hazards · Ranks</div>
@@ -64,7 +64,7 @@ fitCanvas();addEventListener('resize',fitCanvas);X.imageSmoothingEnabled=false;
 const $=id=>document.getElementById(id);
 const scoreEl=$('score'),comboEl=$('combo'),grazeEl=$('graze'),weaponEl=$('weapon'),livesEl=$('lives'),shieldEl=$('shield'),bombsEl=$('bombs'),stageEl=$('stage'),bannerEl=$('banner'),overlay=$('overlay'),touchLayer=$('touch'),splashEl=$('splash');
 
-const GAME_VERSION='0.3.2';
+const GAME_VERSION='0.3.3';
 const UPDATE_CHECK_URL='https://arthur1134.github.io/SkyFortress/version.json';
 function syncVersionBadge(){const el=document.getElementById('version-badge');if(el)el.textContent='v'+GAME_VERSION}
 function compareSemver(a,b){const pa=String(a).split('.').map(n=>parseInt(n,10)||0),pb=String(b).split('.').map(n=>parseInt(n,10)||0);for(let i=0;i<3;i++){const d=(pa[i]||0)-(pb[i]||0);if(d)return d>0?1:-1}return 0}
@@ -268,12 +268,16 @@ bp.addEventListener('touchstart',e=>{e.preventDefault();tch.bomb=true},{passive:
 const gameWrap=document.getElementById('game-wrap')||C;
 function onMouseFireDown(e){
   if(e.button!==0)return;
+  /* Overlay buttons (Hangar, menus, etc.) must not start/fire — let their own handlers run */
+  if(e.target&&e.target.closest&&e.target.closest('#overlay .btn, #overlay button, #update-banner'))return;
   e.preventDefault();
   mouseFire=true;
   try{audio()}catch(err){}
   if(state==='splash'){dismissSplash();return}
   if(state==='daily'){showMenu._skipDaily=true;showMenu();return}
-  if(state==='menu'||state==='hangar'||state==='shop'){startGame();return}
+  /* On menu screens, only blank-area click starts — not Hangar/Help/etc. */
+  if(state==='menu'){startGame();return}
+  if(state==='hangar'||state==='shop'){return} /* stay in hangar; use START button or Space */
   if(state==='gameover'||state==='help'||state==='credits'){showMenu._skipDaily=true;showMenu();return}
   if(state==='stageclear'){nextStage();return}
 }
@@ -300,7 +304,7 @@ function banner(t,f,warn){bannerEl.innerHTML=t.replace(/\\n/g,'<br>');bannerEl.c
 function UI(){scoreEl.textContent='SCORE '+String(score).padStart(6,'0');comboEl.textContent='COMBO x'+combo+(combo>=5?'!':'');grazeEl.textContent='GRAZE '+graze;const wn=['GUN','SPREAD','LASER','HOMING'],ch=charge>=1?' ◆':charge>.3?' ▒':'';weaponEl.textContent=wn[pl.wpn]+' '+'■'.repeat(pl.wLv)+'□'.repeat(3-pl.wLv)+ch;livesEl.textContent='★ '.repeat(Math.max(0,lives)).trim()||'☆';shieldEl.textContent='SHIELD '+'▓'.repeat(Math.min(5,shield))+'░'.repeat(Math.max(0,3-Math.min(3,shield)));bombsEl.textContent='BOMB '+'● '.repeat(bombs).trim()||'○';stageEl.textContent='STAGE '+stage}
 
 function floatTxt(x,y,t,col){floats.push({x,y,t,col:col||'#ffff80',life:40,vy:-.6})}
-function bindBtn(id,fn){const el=overlay.querySelector('#'+id);if(el)el.onclick=e=>{e.preventDefault();e.stopPropagation();fn()}}
+function bindBtn(id,fn){const el=overlay.querySelector('#'+id);if(!el)return;const go=e=>{e.preventDefault();e.stopPropagation();fn()};el.onclick=go;el.onmousedown=e=>{e.preventDefault();e.stopPropagation()};el.ontouchstart=e=>{e.stopPropagation()}}
 function showDailyPopup(dr){
   state='daily';showOv();
   const streakBar=Array.from({length:7},(_,i)=>`<span style="display:inline-block;width:14px;height:14px;margin:1px;border:1px solid #606080;background:${i<meta.streak?'#40c040':'#181828'}"></span>`).join('');
@@ -410,8 +414,8 @@ ${un?'<span class="btn" id="sel-ship">SELECT</span>':''}
 <span class="btn" id="shop-start">▶ START</span>
 <span class="btn" id="shop-back">BACK</span></p>`}
 <p class="blink">←→ select · TAB switch · ESC back</p>`;
-  overlay.querySelectorAll('[data-ship]').forEach(el=>{el.onclick=()=>{hSel=+el.dataset.ship;shopTab=0;rShop()}});
-  overlay.querySelectorAll('[data-up]').forEach(el=>{el.onclick=()=>{hSel=+el.dataset.up;shopTab=1;rShop()}});
+  overlay.querySelectorAll('[data-ship]').forEach(el=>{el.onmousedown=e=>e.stopPropagation();el.onclick=()=>{hSel=+el.dataset.ship;shopTab=0;rShop()}});
+  overlay.querySelectorAll('[data-up]').forEach(el=>{el.onmousedown=e=>e.stopPropagation();el.onclick=()=>{hSel=+el.dataset.up;shopTab=1;rShop()}});
   bindBtn('tab-ships',()=>{shopTab=0;hSel=meta.sel;rShop()});
   bindBtn('tab-up',()=>{shopTab=1;hSel=0;rShop()});
   bindBtn('buy-ship',buyShip);
