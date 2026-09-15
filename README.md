@@ -21,3 +21,18 @@ Arrow keys / WASD · Space/Z fire (hold to charge) · X/B bomb · P pause · M m
 ## Version
 
 Bump `GAME_VERSION` in `index.html` and `version.json` together when shipping.
+
+
+## Stages (v0.3.0)
+
+1. **Dawn Patrol** — open sky
+2. **Cave Run** — tunnel / stalactites
+3. **Neon City** — skyline flyover
+Then cycles storm, desert, night, arctic, volcanic. Stages are much longer.
+
+## Stages (v0.3.0)
+
+1. **Dawn Patrol** — open sky
+2. **Cave Run** — tunnel with stalactites / floating rocks
+3. **Neon City** — skyline flyover with lit windows
+Then storm, desert, night, arctic, volcanic. Stages are much longer.

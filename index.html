@@ -47,7 +47,7 @@ canvas{display:block;background:#000;image-rendering:pixelated;image-rendering:c
 <div id="splash"><div class="stars" id="splash-stars"></div><div class="logo">SKY FORTRESS</div><div class="tag">ULTIMATE · PIXEL SHMUP</div><div class="prompt">PRESS SPACE / CLICK / TAP</div></div>
 <div id="touch"><div class="pad" id="pad-move"></div><div class="pad" id="pad-fire"></div><div class="pad" id="pad-bomb"></div></div>
 </div>
-<div id="version-badge">v0.2.2</div>
+<div id="version-badge">v0.3.0</div>
 <div id="update-banner"><p id="update-banner-text">Update available</p><button onclick="location.reload()">RELOAD</button><button onclick="document.getElementById('update-banner').style.display='none'">LATER</button></div>
 <div id="controls">←↑↓→/WASD · SPACE/Z/LMB fire(hold=charge) · X/B bomb · P pause · M music · R slow-mo · V vol<br>
 Hangar · Graze · Charge · Boss phases · Hazards · Ranks</div>
@@ -63,7 +63,7 @@ fitCanvas();addEventListener('resize',fitCanvas);X.imageSmoothingEnabled=false;
 const $=id=>document.getElementById(id);
 const scoreEl=$('score'),comboEl=$('combo'),grazeEl=$('graze'),weaponEl=$('weapon'),livesEl=$('lives'),shieldEl=$('shield'),bombsEl=$('bombs'),stageEl=$('stage'),bannerEl=$('banner'),overlay=$('overlay'),touchLayer=$('touch'),splashEl=$('splash');
 
-const GAME_VERSION='0.2.2';
+const GAME_VERSION='0.3.0';
 const UPDATE_CHECK_URL='https://arthur1134.github.io/SkyFortress/version.json';
 function syncVersionBadge(){const el=document.getElementById('version-badge');if(el)el.textContent='v'+GAME_VERSION}
 function compareSemver(a,b){const pa=String(a).split('.').map(n=>parseInt(n,10)||0),pb=String(b).split('.').map(n=>parseInt(n,10)||0);for(let i=0;i<3;i++){const d=(pa[i]||0)-(pb[i]||0);if(d)return d>0?1:-1}return 0}
@@ -135,12 +135,17 @@ function checkDailyLogin(){
 }
 
 const THEMES=[
-{n:'DAWN PATROL',sky:'#0a1020',gnd:'#151530',mt:'#12122a',cld:'rgba(50,50,80,.4)',bias:[.42,.12,.28,.12,.03,.03],hz:'none',pal:{0:'#a04040',1:'#606080',2:'#40a060',3:'#4060a0'}},
-{n:'STORM FRONT',sky:'#0a0a18',gnd:'#101028',mt:'#0e0e22',cld:'rgba(30,30,50,.55)',bias:[.28,.22,.2,.18,.06,.06],hz:'lightning',pal:{0:'#8040a0',1:'#505070',2:'#3080a0',3:'#5050c0'}},
-{n:'DESERT SKY',sky:'#18100a',gnd:'#201808',mt:'#1a1408',cld:'rgba(80,60,30,.35)',bias:[.38,.28,.18,.08,.04,.04],hz:'sand',pal:{0:'#c06030',1:'#806040',2:'#a08030',3:'#a05020'}},
-{n:'NIGHT RAID',sky:'#050510',gnd:'#0a0a1a',mt:'#080818',cld:'rgba(20,20,40,.5)',bias:[.22,.18,.32,.16,.06,.06],hz:'flak',pal:{0:'#6030a0',1:'#404060',2:'#2060a0',3:'#3030a0'}},
-{n:'ARCTIC WING',sky:'#0a1520',gnd:'#101828',mt:'#0c1420',cld:'rgba(60,80,100,.4)',bias:[.32,.14,.28,.16,.05,.05],hz:'ice',pal:{0:'#4080a0',1:'#507090',2:'#60c0c0',3:'#4060a0'}},
-{n:'VOLCANIC',sky:'#1a0808',gnd:'#200c0c',mt:'#180808',cld:'rgba(60,20,20,.45)',bias:[.18,.35,.15,.16,.08,.08],hz:'ash',pal:{0:'#c04020',1:'#804030',2:'#a06020',3:'#a03030'}}];
+/* Stage 1 — open sky */
+{n:'DAWN PATROL',kind:'sky',sky:'#0a1020',gnd:'#151530',mt:'#12122a',cld:'rgba(50,50,80,.4)',bias:[.42,.12,.28,.12,.03,.03],hz:'none',pal:{0:'#a04040',1:'#606080',2:'#40a060',3:'#4060a0'}},
+/* Stage 2 — cave tunnel */
+{n:'CAVE RUN',kind:'cave',sky:'#08060a',gnd:'#1a1210',mt:'#2a2018',cld:'rgba(0,0,0,0)',bias:[.25,.3,.15,.15,.08,.07],hz:'ash',pal:{0:'#a05030',1:'#705040',2:'#806020',3:'#604020'}},
+/* Stage 3 — neon city skyline */
+{n:'NEON CITY',kind:'city',sky:'#060418',gnd:'#0a0a1c',mt:'#1a1040',cld:'rgba(80,40,120,.25)',bias:[.22,.2,.28,.18,.06,.06],hz:'flak',pal:{0:'#c040a0',1:'#5050a0',2:'#40c0c0',3:'#8040e0'}},
+{n:'STORM FRONT',kind:'sky',sky:'#0a0a18',gnd:'#101028',mt:'#0e0e22',cld:'rgba(30,30,50,.55)',bias:[.28,.22,.2,.18,.06,.06],hz:'lightning',pal:{0:'#8040a0',1:'#505070',2:'#3080a0',3:'#5050c0'}},
+{n:'DESERT SKY',kind:'sky',sky:'#18100a',gnd:'#201808',mt:'#1a1408',cld:'rgba(80,60,30,.35)',bias:[.38,.28,.18,.08,.04,.04],hz:'sand',pal:{0:'#c06030',1:'#806040',2:'#a08030',3:'#a05020'}},
+{n:'NIGHT RAID',kind:'sky',sky:'#050510',gnd:'#0a0a1a',mt:'#080818',cld:'rgba(20,20,40,.5)',bias:[.22,.18,.32,.16,.06,.06],hz:'flak',pal:{0:'#6030a0',1:'#404060',2:'#2060a0',3:'#3030a0'}},
+{n:'ARCTIC WING',kind:'sky',sky:'#0a1520',gnd:'#101828',mt:'#0c1420',cld:'rgba(60,80,100,.4)',bias:[.32,.14,.28,.16,.05,.05],hz:'ice',pal:{0:'#4080a0',1:'#507090',2:'#60c0c0',3:'#4060a0'}},
+{n:'VOLCANIC',kind:'sky',sky:'#1a0808',gnd:'#200c0c',mt:'#180808',cld:'rgba(60,20,20,.45)',bias:[.18,.35,.15,.16,.08,.08],hz:'ash',pal:{0:'#c04020',1:'#804030',2:'#a06020',3:'#a03030'}}];
 const FORMS={v:n=>{const o=[];for(let i=0;i<n;i++)o.push({dx:Math.abs(i-(n-1)/2)*14,dy:(i-(n-1)/2)*13});return o},
 line:n=>{const o=[];for(let i=0;i<n;i++)o.push({dx:i*18,dy:0});return o},
 diamond:()=>[{dx:0,dy:0},{dx:18,dy:-14},{dx:18,dy:14},{dx:36,dy:0}],
@@ -162,17 +167,17 @@ const MIDARCH=[
 ];
 
 let seed=0,theme=THEMES[0],plan=[],pIdx=0,eTimer=0,bArch=BARCH[0],mArch=MIDARCH[0];
-let terr={stars:[],clouds:[],mts:[],far:[],spd:1},haz=[];
+let terr={stars:[],clouds:[],mts:[],far:[],props:[],ceil:[],spd:1},haz=[];
 function genStage(sn){
 seed=(Date.now()&0xffff)+sn*7919;rng=mulberry32(seed);theme=THEMES[(sn-1)%THEMES.length];
 const bias=theme.bias.slice();for(let i=0;i<bias.length;i++)bias[i]=Math.max(.02,bias[i]+(R()-.5)*.08);
 const sum=bias.reduce((a,b)=>a+b,0);theme._b=bias.map(b=>b/sum);bArch=P(BARCH);mArch=P(MIDARCH);
 /* pacing: early stages teach, later challenge — more waves, gentler early intensity */
-const waves=7+Math.min(8,sn);plan=[];pIdx=0;eTimer=sn===1?40:28;let mid=false;
+const waves=14+Math.min(12,sn*2);plan=[];pIdx=0;eTimer=sn===1?50:36;let mid=false;
 for(let w=0;w<waves;w++){
 const pr=w/Math.max(1,waves-1),ins=.22+pr*.7-Math.sin(pr*Math.PI)*.1+(sn>1?Math.min(.12,(sn-1)*.025):0),roll=R();
-if(!mid&&pr>.42&&pr<.62&&CH(.75)){plan.push({t:'rest',d:28});plan.push({t:'mid'});plan.push({t:'rest',d:32});mid=true;continue}
-if(pr>.28&&pr<.55&&CH(.28))plan.push({t:'rest',d:30+RI(12,35)});
+if(!mid&&pr>.42&&pr<.62&&CH(.75)){plan.push({t:'rest',d:40});plan.push({t:'mid'});plan.push({t:'rest',d:48});mid=true;continue}
+if(CH(.42))plan.push({t:'rest',d:36+RI(18,50)});
 if(roll<.22+ins*.1){const fk=P(FKEYS),c=fk==='swarm'?RI(4,6+Math.min(2,sn|0)):RI(3,5+Math.min(1,sn|0));plan.push({t:'form',f:fk,c,et:wE(ins),sm:.85+ins*.35+sn*.03,y:25+R()*110})}
 else if(roll<.52){const n=CH(.3+ins*.28)?2:1;for(let i=0;i<n;i++)plan.push({t:'solo',et:wE(ins),sm:.8+ins*.4+sn*.035,y:20+R()*(H-50),dl:i*10})}
 else if(roll<.68)plan.push({t:'elite',y:30+R()*100,es:CH(.5)?RI(1,2+Math.min(1,sn|0)):0,sm:.75+ins*.22});
@@ -180,12 +185,25 @@ else if(roll<.82)plan.push({t:'burst',c:RI(3,4+ins*2.5|0),et:wE(ins),sm:.95+ins*
 else plan.push({t:CH(.5)?'sui':'tur',y:25+R()*120,c:RI(2,3+Math.min(1,ins*2|0))});
 plan.push({t:'wait',d:Math.max(18,52-ins*26-sn*1.5)+RI(0,16)})}
 plan.push({t:'rest',d:40+RI(10,20)});plan.push({t:'boss'});
-terr.stars=[];terr.clouds=[];terr.mts=[];terr.far=[];terr.spd=.85+sn*.04;haz=[];
-for(let i=0;i<90;i++)terr.stars.push({x:R()*W,y:R()*H,s:CH(.7)?1:CH(.85)?2:3,sp:.15+R()*1.8,layer:CH(.4)?0:1});
-for(let i=0;i<7;i++)terr.clouds.push({x:R()*(W+120),y:4+R()*60,w:28+R()*55,sp:.1+R()*.28,h:6+R()*4});
-for(let i=0;i<4;i++)terr.far.push({x:i*(W/4)+R()*40,h:10+R()*18,w:70+R()*60});
-for(let i=0;i<5;i++)terr.mts.push({x:i*(W/5)+R()*30,h:18+R()*34,w:55+R()*50});
-return{n:theme.n,seed,boss:bArch.n}}
+terr.stars=[];terr.clouds=[];terr.mts=[];terr.far=[];terr.props=[];terr.ceil=[];terr.spd=.7+sn*.03;haz=[];
+const kind=theme.kind||'sky';
+if(kind!=='cave'){for(let i=0;i<90;i++)terr.stars.push({x:R()*W,y:R()*H,s:CH(.7)?1:CH(.85)?2:3,sp:.15+R()*1.8,layer:CH(.4)?0:1})}
+if(kind==='sky'){
+  for(let i=0;i<7;i++)terr.clouds.push({x:R()*(W+120),y:4+R()*60,w:28+R()*55,sp:.1+R()*.28,h:6+R()*4});
+  for(let i=0;i<4;i++)terr.far.push({x:i*(W/4)+R()*40,h:10+R()*18,w:70+R()*60});
+  for(let i=0;i<5;i++)terr.mts.push({x:i*(W/5)+R()*30,h:18+R()*34,w:55+R()*50});
+}else if(kind==='cave'){
+  /* stalactites / stalagmites + rocky walls */
+  for(let i=0;i<8;i++)terr.ceil.push({x:i*(W/7)+R()*20,h:14+R()*28,w:22+R()*30});
+  for(let i=0;i<7;i++)terr.mts.push({x:i*(W/6)+R()*18,h:16+R()*32,w:28+R()*36});
+  for(let i=0;i<12;i++)terr.props.push({x:R()*W,y:20+R()*(H-40),s:1+R()*2,sp:.4+R()*1.2}); /* floating rocks */
+}else if(kind==='city'){
+  for(let i=0;i<5;i++)terr.clouds.push({x:R()*(W+120),y:2+R()*35,w:40+R()*70,sp:.08+R()*.2,h:5+R()*4});
+  /* skyline buildings */
+  for(let i=0;i<10;i++)terr.props.push({x:i*(W/9)+R()*8,h:28+R()*70,w:16+R()*22,win:RI(2,5)});
+  for(let i=0;i<4;i++)terr.far.push({x:i*(W/4)+R()*20,h:20+R()*40,w:40+R()*50});
+}
+return{n:theme.n,seed,boss:bArch.n,kind}}
 function wE(ins){const b=theme._b||theme.bias;const w=[b[0]*(1.15-ins*.3),b[1]*(.65+ins*.55),b[2]*(.85+ins*.4),b[3]*(.9+ins*.2),b[4]*(.45+ins*.85),b[5]*(.35+ins*.75)];const t=w.reduce((a,c)=>a+c,0);let r=R()*t;for(let i=0;i<w.length;i++){r-=w[i];if(r<=0)return i}return 0}
 
 let state='splash',score=0,lives=3,shield=3,bombs=2,inv=0,shake=0,hitstop=0,frame=0;
@@ -568,8 +586,12 @@ for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.x+=p.vx;p.y+=p.vy;p.vx*=.9
 updHaz();
 for(const s of terr.stars){s.x-=s.sp*terr.spd*spd*(s.layer?1:.55);if(s.x<0){s.x=W;s.y=Math.random()*H}}
 for(const c of terr.clouds){c.x-=c.sp*terr.spd*spd;if(c.x+c.w<0){c.x=W+20;c.y=4+Math.random()*60}}
-for(const m of terr.far){m.x-=.18*terr.spd*spd;if(m.x+m.w<0){m.x=W+Math.random()*40;m.h=10+Math.random()*18}}
-for(const m of terr.mts){m.x-=.35*terr.spd*spd;if(m.x+m.w<0){m.x=W+Math.random()*40;m.h=18+Math.random()*34}}}
+for(const m of terr.far){m.x-=.18*terr.spd*spd;if(m.x+m.w<0){m.x=W+Math.random()*40;m.h=10+Math.random()*40}}
+for(const m of terr.mts){m.x-=.35*terr.spd*spd;if(m.x+m.w<0){m.x=W+Math.random()*40;m.h=16+Math.random()*34}}
+for(const c of terr.ceil){c.x-=.32*terr.spd*spd;if(c.x+c.w<0){c.x=W+Math.random()*30;c.h=14+Math.random()*28}}
+const kind=theme.kind||'sky';
+if(kind==='cave'){for(const r of terr.props){r.x-=r.sp*terr.spd*spd;if(r.x< -4){r.x=W+4;r.y=20+Math.random()*(H-40)}}}
+if(kind==='city'){for(const b of terr.props){b.x-=.42*terr.spd*spd;if(b.x+b.w<0){b.x=W+Math.random()*20;b.h=28+Math.random()*70}}}}
 
 function draw(){
   if(state==='splash'){
@@ -578,16 +600,48 @@ function draw(){
     return;
   }
   const sx=shake>.4?(Math.random()-.5)*shake:0,sy=shake>.4?(Math.random()-.5)*shake:0;X.save();X.translate(sx,sy);
+    const kind=theme.kind||'sky';
   X.fillStyle=theme.sky||'#0a0a18';X.fillRect(-10,-10,W+20,H+20);
-  /* far stars (dim) then near */
-  for(const s of terr.stars){if(!s.layer){X.fillStyle=s.s===1?'#303048':'#505070';X.fillRect(s.x|0,s.y|0,s.s,s.s)}}
-  for(const s of terr.stars){if(s.layer){X.fillStyle=s.s>=2?'#a0a0c0':'#707090';X.fillRect(s.x|0,s.y|0,s.s,s.s)}}
-  /* far mountains */
-  X.fillStyle=theme.mt||'#12122a';X.globalAlpha=.45;for(const m of terr.far){X.beginPath();X.moveTo(m.x,H-10);X.lineTo(m.x+m.w*.45,H-10-m.h);X.lineTo(m.x+m.w,H-10);X.fill()}X.globalAlpha=1;
-  X.fillStyle=theme.cld||'rgba(40,40,70,.45)';for(const c of terr.clouds){X.fillRect(c.x|0,c.y|0,c.w|0,c.h|0||8);X.fillRect((c.x+10)|0,(c.y-3)|0,(c.w*.55)|0,5)}
-  X.fillStyle=theme.mt||'#12122a';for(const m of terr.mts){X.beginPath();X.moveTo(m.x,H-10);X.lineTo(m.x+m.w*.4,H-10-m.h);X.lineTo(m.x+m.w,H-10);X.fill()}
-  X.fillStyle=theme.gnd||'#151530';X.fillRect(0,H-10,W,12);X.fillStyle='#0e0e20';for(let i=0;i<18;i++){const gx=((i*20-frame*.7*terr.spd)%(W+20));X.fillRect(gx,H-7,12,3)}
-  dHaz();for(const t of trails){X.globalAlpha=t.life/7;rect(t.x,t.y,3,2,t.col)}X.globalAlpha=1;
+  if(kind!=='cave'){
+    for(const s of terr.stars){if(!s.layer){X.fillStyle=s.s===1?'#303048':'#505070';X.fillRect(s.x|0,s.y|0,s.s,s.s)}}
+    for(const s of terr.stars){if(s.layer){X.fillStyle=s.s>=2?'#a0a0c0':'#707090';X.fillRect(s.x|0,s.y|0,s.s,s.s)}}
+  }
+  if(kind==='cave'){
+    /* dark tunnel walls */
+    X.fillStyle='#120e0c';X.fillRect(0,0,W,18);X.fillRect(0,H-16,W,20);
+    X.fillStyle=theme.mt||'#2a2018';
+    for(const c of terr.ceil){X.beginPath();X.moveTo(c.x,0);X.lineTo(c.x+c.w*.45,c.h);X.lineTo(c.x+c.w,0);X.fill()}
+    for(const m of terr.mts){X.beginPath();X.moveTo(m.x,H);X.lineTo(m.x+m.w*.4,H-m.h);X.lineTo(m.x+m.w,H);X.fill()}
+    X.fillStyle='#3a3020';for(const r of terr.props){X.fillRect(r.x|0,r.y|0,r.s+1,r.s+1)}
+    /* vignette */
+    X.fillStyle='rgba(0,0,0,.35)';X.fillRect(0,0,22,H);X.fillRect(W-22,0,24,H);
+    X.fillStyle=theme.gnd||'#1a1210';X.fillRect(0,H-8,W,10);
+  }else if(kind==='city'){
+    X.fillStyle=theme.cld||'rgba(80,40,120,.25)';for(const c of terr.clouds){X.fillRect(c.x|0,c.y|0,c.w|0,c.h|0||8)}
+    /* far skyline silhouettes */
+    X.fillStyle='#100828';X.globalAlpha=.7;for(const m of terr.far){X.fillRect(m.x|0,(H-12-m.h)|0,m.w|0,m.h|0)}X.globalAlpha=1;
+    /* neon buildings */
+    for(const b of terr.props){
+      X.fillStyle='#14102a';X.fillRect(b.x|0,(H-10-b.h)|0,b.w|0,b.h|0);
+      X.fillStyle='#1a1440';X.fillRect((b.x+2)|0,(H-10-b.h+2)|0,Math.max(2,(b.w-4)|0),Math.max(2,(b.h-4)|0));
+      /* windows */
+      for(let wy=0;wy<(b.win||3);wy++){
+        for(let wx=0;wx<2;wx++){
+          if(((frame/8|0)+wx+wy+(b.x|0))%5===0)continue;
+          X.fillStyle=(wx+wy)%2?'#ff40c0':'#40e0ff';
+          X.fillRect((b.x+4+wx*5)|0,(H-14-b.h+8+wy*7)|0,3,3);
+        }
+      }
+    }
+    X.fillStyle=theme.gnd||'#0a0a1c';X.fillRect(0,H-10,W,12);
+    X.fillStyle='#ff2080';X.globalAlpha=.5;X.fillRect(0,H-11,W,1);X.globalAlpha=1;
+  }else{
+    X.fillStyle=theme.mt||'#12122a';X.globalAlpha=.45;for(const m of terr.far){X.beginPath();X.moveTo(m.x,H-10);X.lineTo(m.x+m.w*.45,H-10-m.h);X.lineTo(m.x+m.w,H-10);X.fill()}X.globalAlpha=1;
+    X.fillStyle=theme.cld||'rgba(40,40,70,.45)';for(const c of terr.clouds){X.fillRect(c.x|0,c.y|0,c.w|0,c.h|0||8);X.fillRect((c.x+10)|0,(c.y-3)|0,(c.w*.55)|0,5)}
+    X.fillStyle=theme.mt||'#12122a';for(const m of terr.mts){X.beginPath();X.moveTo(m.x,H-10);X.lineTo(m.x+m.w*.4,H-10-m.h);X.lineTo(m.x+m.w,H-10);X.fill()}
+    X.fillStyle=theme.gnd||'#151530';X.fillRect(0,H-10,W,12);X.fillStyle='#0e0e20';for(let i=0;i<18;i++){const gx=((i*20-frame*.7*terr.spd)%(W+20));X.fillRect(gx,H-7,12,3)}
+  }
+dHaz();for(const t of trails){X.globalAlpha=t.life/7;rect(t.x,t.y,3,2,t.col)}X.globalAlpha=1;
   for(const p of pups)dPup(p);for(const b of eBul)dBul(b);for(const e of enem)dEn(e);if(mid)dMid(mid);if(boss)dBoss(boss);for(const b of pl.bul)dBul(b);
   for(const o of pl.opt){rect(o.x,o.y+2,8,5,'#80c0ff');rect(o.x+2,o.y+1,4,2,'#a0e0ff');if(frame%6<3)rect(o.x-1,o.y+3,2,2,'#40a0ff')}
   if(inv<=0||(inv/3|0)%2===0)dPl(pl.x,pl.y,inv>0);
