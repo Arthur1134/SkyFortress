@@ -263,7 +263,6 @@ gameWrap.addEventListener('mouseleave',()=>{if(mouseFire){if(charging)relCharge(
 gameWrap.addEventListener('contextmenu',e=>e.preventDefault());
 
 splashEl.addEventListener('touchstart',e=>{e.preventDefault();dismissSplash()},{passive:false});
-})();
 splashEl.addEventListener('click',()=>dismissSplash());
 
 function togPause(){if(state==='play'){state='pause';ovHTML('PAUSED',`<p style="line-height:1.7">P — resume<br>M — music <b style="color:#80ff80">${musicOn?'ON':'OFF'}</b><br>R — slow-mo <b>${slow?'ON':'OFF'}</b><br>V — volume <b>${vol===0?'MUTE':vol<.5?'LOW':'HIGH'}</b></p><p style="font-size:12px;color:#8080a0;margin-top:6px">Seed ${seed} · ${theme.n}<br>Boss: ${bArch.n} · Credits: ${meta.cr}<br>Stage ${stage} · Combo x${combo} · Graze ${graze}</p><p class="blink">PRESS P</p>`)}else if(state==='pause'){state='play';hideOv()}}
