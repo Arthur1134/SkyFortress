@@ -4,39 +4,39 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#06060e;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:"Courier New",monospace;color:#c0c0c0;overflow:hidden;user-select:none;touch-action:none}
-h1{font-size:18px;letter-spacing:4px;color:#e0e0a0;text-shadow:2px 2px 0 #303018,0 0 12px rgba(200,200,80,.25);margin-bottom:8px}
-#game-wrap{position:relative;border:3px solid #6a6a8a;box-shadow:0 0 0 2px #1a1a28,0 0 0 5px #3a3a50,0 0 0 7px #12121c,0 0 40px rgba(0,0,0,.9),inset 0 0 30px rgba(40,40,80,.15);border-radius:2px;background:#000}
+h1{font-size:clamp(22px,3.2vw,34px);letter-spacing:5px;color:#e0e0a0;text-shadow:2px 2px 0 #303018,0 0 12px rgba(200,200,80,.25);margin-bottom:10px}
+#game-wrap{--sc:3;position:relative;border:3px solid #6a6a8a;box-shadow:0 0 0 2px #1a1a28,0 0 0 5px #3a3a50,0 0 0 7px #12121c,0 0 40px rgba(0,0,0,.9),inset 0 0 30px rgba(40,40,80,.15);border-radius:2px;background:#000}
 canvas{display:block;background:#000;image-rendering:pixelated;image-rendering:crisp-edges}
-#ui{position:absolute;top:4px;left:6px;right:6px;display:flex;justify-content:space-between;font-size:10px;color:#e8e8c0;text-shadow:1px 1px 0 #000,0 0 4px #000;pointer-events:none;z-index:10;line-height:1.35}
+#ui{position:absolute;top:6px;left:8px;right:8px;display:flex;justify-content:space-between;font-size:calc(var(--sc,3)*5.5px);color:#e8e8c0;text-shadow:1px 1px 0 #000,0 0 4px #000;pointer-events:none;z-index:10;line-height:1.4}
 #ui-left,#ui-right{display:flex;flex-direction:column}#ui-right{text-align:right}
-#banner{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);font-size:16px;color:#ffff80;text-shadow:2px 2px 0 #404000,0 0 10px rgba(255,255,100,.4);pointer-events:none;z-index:15;opacity:0;text-align:center;line-height:1.45;letter-spacing:1px;transition:opacity .15s}
+#banner{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);font-size:calc(var(--sc,3)*7px);color:#ffff80;text-shadow:2px 2px 0 #404000,0 0 10px rgba(255,255,100,.4);pointer-events:none;z-index:15;opacity:0;text-align:center;line-height:1.45;letter-spacing:1px;transition:opacity .15s}
 #banner.show{opacity:1}
-#banner.warn{color:#ff6060;text-shadow:2px 2px 0 #400000,0 0 12px rgba(255,60,60,.5);font-size:18px}
-#overlay{position:absolute;inset:0;background:rgba(0,0,8,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:20;padding:10px 8px;overflow-y:auto}
-#overlay h2{font-size:24px;color:#f0f0a0;text-shadow:2px 2px 0 #404000,0 0 8px rgba(240,240,100,.3);margin-bottom:10px;letter-spacing:2px}
-#overlay p{font-size:13px;color:#c0c0c0;line-height:1.55;max-width:300px}
-#overlay .blink{margin-top:12px;font-size:13px;color:#80ff80;animation:b .75s step-end infinite}@keyframes b{50%{opacity:0}}
-#overlay .btn{display:inline-block;margin:5px 4px;padding:8px 16px;border:2px solid #707090;background:linear-gradient(#222238,#14142a);color:#d0d0f0;font:13px monospace;cursor:pointer;min-width:88px}
+#banner.warn{color:#ff6060;text-shadow:2px 2px 0 #400000,0 0 12px rgba(255,60,60,.5);font-size:calc(var(--sc,3)*8px)}
+#overlay{position:absolute;inset:0;background:rgba(0,0,8,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:20;padding:calc(var(--sc,3)*4px) calc(var(--sc,3)*3px);overflow-y:auto}
+#overlay h2{font-size:calc(var(--sc,3)*9px);color:#f0f0a0;text-shadow:2px 2px 0 #404000,0 0 8px rgba(240,240,100,.3);margin-bottom:calc(var(--sc,3)*3px);letter-spacing:2px}
+#overlay p{font-size:calc(var(--sc,3)*5px);color:#c0c0c0;line-height:1.55;max-width:min(92%,calc(var(--sc,3)*95px))}
+#overlay .blink{margin-top:calc(var(--sc,3)*4px);font-size:calc(var(--sc,3)*5px);color:#80ff80;animation:b .75s step-end infinite}@keyframes b{50%{opacity:0}}
+#overlay .btn{display:inline-block;margin:calc(var(--sc,3)*2px) calc(var(--sc,3)*1.5px);padding:calc(var(--sc,3)*3px) calc(var(--sc,3)*5px);border:2px solid #707090;background:linear-gradient(#222238,#14142a);color:#d0d0f0;font:calc(var(--sc,3)*5px) monospace;cursor:pointer;min-width:calc(var(--sc,3)*28px)}
 #overlay .btn:hover,#overlay .btn.sel{background:linear-gradient(#404068,#282850);color:#ffffa0;border-color:#a0a0c0;box-shadow:0 0 8px rgba(160,160,200,.25)}
 #overlay .btn.locked{opacity:.35;cursor:default}
-#overlay .scores{margin-top:10px;font-size:12px;color:#9090b0;text-align:left}
+#overlay .scores{margin-top:calc(var(--sc,3)*3px);font-size:calc(var(--sc,3)*4.5px);color:#9090b0;text-align:left}
 #overlay[hidden],#overlay.hidden,body.playing #overlay{display:none!important;visibility:hidden!important;pointer-events:none!important;opacity:0!important}
 #splash{position:absolute;inset:0;background:#05050e;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:30;text-align:center;transition:opacity .5s}
 #splash.fade{opacity:0;pointer-events:none}
 #splash.gone{display:none!important}
-#splash .logo{font-size:28px;color:#f0f0a0;letter-spacing:3px;text-shadow:3px 3px 0 #303010,0 0 20px rgba(255,255,100,.35);margin-bottom:8px}
-#splash .tag{font-size:13px;color:#8080a0;letter-spacing:2px;margin-bottom:20px}
-#splash .prompt{font-size:13px;color:#80ff80;animation:b .8s step-end infinite;margin-top:18px}
+#splash .logo{font-size:calc(var(--sc,3)*11px);color:#f0f0a0;letter-spacing:3px;text-shadow:3px 3px 0 #303010,0 0 20px rgba(255,255,100,.35);margin-bottom:calc(var(--sc,3)*3px)}
+#splash .tag{font-size:calc(var(--sc,3)*5px);color:#8080a0;letter-spacing:2px;margin-bottom:calc(var(--sc,3)*6px)}
+#splash .prompt{font-size:calc(var(--sc,3)*5px);color:#80ff80;animation:b .8s step-end infinite;margin-top:calc(var(--sc,3)*5px)}
 #splash .stars{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-#controls{margin-top:10px;font-size:12px;color:#606080;text-align:center;max-width:720px;line-height:1.45}
+#controls{margin-top:12px;font-size:clamp(13px,1.6vw,18px);color:#707090;text-align:center;max-width:900px;line-height:1.5}
 #touch{display:none;position:absolute;inset:0;z-index:5;pointer-events:none}
 #touch.active{display:block;pointer-events:auto}
 .pad{position:absolute;width:84px;height:84px;border-radius:50%;background:rgba(80,80,120,.22);border:2px solid rgba(160,160,200,.3);bottom:12px}
 #pad-move{left:12px}#pad-fire{right:12px;width:64px;height:64px;bottom:20px;background:rgba(180,60,60,.28)}
 #pad-bomb{right:90px;width:46px;height:46px;bottom:26px;background:rgba(60,140,60,.28)}
-#version-badge{position:fixed;bottom:8px;right:10px;color:#505070;font:10px monospace;z-index:50;pointer-events:none}
-#update-banner{display:none;position:fixed;bottom:36px;left:50%;transform:translateX(-50%);background:rgba(0,0,20,.95);border:2px solid #8080c0;padding:10px 14px;z-index:60;text-align:center;font:11px monospace;color:#c0c0e0}
-#update-banner button{margin:4px;padding:4px 10px;font:11px monospace;cursor:pointer;background:#181828;border:1px solid #606080;color:#c0c0e0}
+#version-badge{position:fixed;bottom:10px;right:12px;color:#606080;font:13px monospace;z-index:50;pointer-events:none}
+#update-banner{display:none;position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:rgba(0,0,20,.95);border:2px solid #8080c0;padding:12px 16px;z-index:60;text-align:center;font:14px monospace;color:#c0c0e0}
+#update-banner button{margin:6px;padding:6px 12px;font:13px monospace;cursor:pointer;background:#181828;border:1px solid #606080;color:#c0c0e0}
 </style></head><body>
 <h1>▲ SKY FORTRESS ULTIMATE ▲</h1>
 <div id="game-wrap">
@@ -47,7 +47,7 @@ canvas{display:block;background:#000;image-rendering:pixelated;image-rendering:c
 <div id="splash"><div class="stars" id="splash-stars"></div><div class="logo">SKY FORTRESS</div><div class="tag">ULTIMATE · PIXEL SHMUP</div><div class="prompt">PRESS SPACE / CLICK / TAP</div></div>
 <div id="touch"><div class="pad" id="pad-move"></div><div class="pad" id="pad-fire"></div><div class="pad" id="pad-bomb"></div></div>
 </div>
-<div id="version-badge">v0.3.0</div>
+<div id="version-badge">v0.3.1</div>
 <div id="update-banner"><p id="update-banner-text">Update available</p><button onclick="location.reload()">RELOAD</button><button onclick="document.getElementById('update-banner').style.display='none'">LATER</button></div>
 <div id="controls">←↑↓→/WASD · SPACE/Z/LMB fire(hold=charge) · X/B bomb · P pause · M music · R slow-mo · V vol<br>
 Hangar · Graze · Charge · Boss phases · Hazards · Ranks</div>
@@ -55,15 +55,16 @@ Hangar · Graze · Charge · Boss phases · Hazards · Ranks</div>
 (()=>{
 const C=document.getElementById('c'),X=C.getContext('2d'),W=320,H=200;
 function fitCanvas(){
-  const maxW=Math.max(40,innerWidth-48),maxH=Math.max(40,innerHeight-110);
+  const maxW=Math.max(40,innerWidth-48),maxH=Math.max(40,innerHeight-140);
   const sc=Math.max(2,Math.min(6,Math.floor(Math.min(maxW/W,maxH/H))));
   C.style.width=W*sc+'px';C.style.height=H*sc+'px';
+  const wrap=document.getElementById('game-wrap');if(wrap)wrap.style.setProperty('--sc',String(sc));
 }
 fitCanvas();addEventListener('resize',fitCanvas);X.imageSmoothingEnabled=false;
 const $=id=>document.getElementById(id);
 const scoreEl=$('score'),comboEl=$('combo'),grazeEl=$('graze'),weaponEl=$('weapon'),livesEl=$('lives'),shieldEl=$('shield'),bombsEl=$('bombs'),stageEl=$('stage'),bannerEl=$('banner'),overlay=$('overlay'),touchLayer=$('touch'),splashEl=$('splash');
 
-const GAME_VERSION='0.3.0';
+const GAME_VERSION='0.3.1';
 const UPDATE_CHECK_URL='https://arthur1134.github.io/SkyFortress/version.json';
 function syncVersionBadge(){const el=document.getElementById('version-badge');if(el)el.textContent='v'+GAME_VERSION}
 function compareSemver(a,b){const pa=String(a).split('.').map(n=>parseInt(n,10)||0),pb=String(b).split('.').map(n=>parseInt(n,10)||0);for(let i=0;i<3;i++){const d=(pa[i]||0)-(pb[i]||0);if(d)return d>0?1:-1}return 0}
@@ -284,7 +285,7 @@ gameWrap.addEventListener('contextmenu',e=>e.preventDefault());
 splashEl.addEventListener('touchstart',e=>{e.preventDefault();dismissSplash()},{passive:false});
 splashEl.addEventListener('click',()=>dismissSplash());
 
-function togPause(){if(state==='play'){state='pause';ovHTML('PAUSED',`<p style="line-height:1.7">P — resume<br>M — music <b style="color:#80ff80">${musicOn?'ON':'OFF'}</b><br>R — slow-mo <b>${slow?'ON':'OFF'}</b><br>V — volume <b>${vol===0?'MUTE':vol<.5?'LOW':'HIGH'}</b></p><p style="font-size:12px;color:#8080a0;margin-top:6px">Seed ${seed} · ${theme.n}<br>Boss: ${bArch.n} · Credits: ${meta.cr}<br>Stage ${stage} · Combo x${combo} · Graze ${graze}</p><p class="blink">PRESS P</p>`)}else if(state==='pause'){state='play';hideOv()}}
+function togPause(){if(state==='play'){state='pause';ovHTML('PAUSED',`<p style="line-height:1.7">P — resume<br>M — music <b style="color:#80ff80">${musicOn?'ON':'OFF'}</b><br>R — slow-mo <b>${slow?'ON':'OFF'}</b><br>V — volume <b>${vol===0?'MUTE':vol<.5?'LOW':'HIGH'}</b></p><p style="font-size:calc(var(--sc,3)*4.5px);color:#8080a0;margin-top:6px">Seed ${seed} · ${theme.n}<br>Boss: ${bArch.n} · Credits: ${meta.cr}<br>Stage ${stage} · Combo x${combo} · Graze ${graze}</p><p class="blink">PRESS P</p>`)}else if(state==='pause'){state='play';hideOv()}}
 
 let hSel=0,shopTab=0;
 function showOv(){document.body.classList.remove('playing');overlay.hidden=false;overlay.classList.remove('hidden');overlay.removeAttribute('hidden');overlay.style.cssText='display:flex!important;visibility:visible;opacity:1;pointer-events:auto'}
@@ -299,10 +300,10 @@ function showDailyPopup(dr){
   state='daily';showOv();
   const streakBar=Array.from({length:7},(_,i)=>`<span style="display:inline-block;width:14px;height:14px;margin:1px;border:1px solid #606080;background:${i<meta.streak?'#40c040':'#181828'}"></span>`).join('');
   overlay.innerHTML=`<h2>DAILY REWARD</h2>
-<p style="color:#80ff80;font-size:16px;margin:10px 0">+${dr.amt} CREDITS</p>
+<p style="color:#80ff80;font-size:calc(var(--sc,3)*6px);margin:10px 0">+${dr.amt} CREDITS</p>
 <p>Login streak: <b style="color:#ffff80">${dr.streak} day${dr.streak>1?'s':''}</b>${dr.bonus?' · <span style="color:#ff80ff">WEEK BONUS!</span>':''}</p>
 <p style="margin:8px 0">${streakBar}</p>
-<p style="font-size:12px;color:#9090b0;max-width:280px">Come back each day for more credits.<br>Day 7+ grants a bonus. Miss a day and the streak resets.</p>
+<p style="font-size:calc(var(--sc,3)*4.5px);color:#9090b0;max-width:min(92%,calc(var(--sc,3)*90px))">Come back each day for more credits.<br>Day 7+ grants a bonus. Miss a day and the streak resets.</p>
 <p style="margin-top:10px"><span class="btn" id="d-ok">CLAIM</span></p>
 <p class="blink">SPACE to claim</p>`;
   bindBtn('d-ok',()=>{showMenu._skipDaily=true;showMenu()});
@@ -315,10 +316,10 @@ function showMenu(){
   state='menu';showOv();
   const hs=loadHS().map((e,i)=>`${i+1}. ${String(e.s).padStart(6,'0')} ${e.r||''}`).join('<br>')||'No scores yet';
   const dailyLine=meta.lastLogin===todayStr()
-    ?`<p style="font-size:12px;color:#80c080">Daily claimed · Streak ${meta.streak} · Next ~${dailyRewardAmt(meta.streak+1)} cr</p>`
-    :`<p style="font-size:12px;color:#c0c080">Daily ready · Streak ${meta.streak||0}</p>`;
+    ?`<p style="font-size:calc(var(--sc,3)*4.5px);color:#80c080">Daily claimed · Streak ${meta.streak} · Next ~${dailyRewardAmt(meta.streak+1)} cr</p>`
+    :`<p style="font-size:calc(var(--sc,3)*4.5px);color:#c0c080">Daily ready · Streak ${meta.streak||0}</p>`;
   overlay.innerHTML=`<h2>SKY FORTRESS</h2>
-<p style="color:#9090b0;margin-bottom:6px;letter-spacing:1px;font-size:13px">ULTIMATE · v${GAME_VERSION}</p>
+<p style="color:#9090b0;margin-bottom:6px;letter-spacing:1px;font-size:calc(var(--sc,3)*5px)">ULTIMATE · v${GAME_VERSION}</p>
 <p>Credits: <b style="color:#80ff80">${meta.cr}</b> · Best: <b style="color:#ffff80">${meta.best}</b></p>
 ${dailyLine}
 <div style="margin:12px 0">
@@ -341,7 +342,7 @@ ${dailyLine}
 function showHelp(){
   state='help';showOv();
   overlay.innerHTML=`<h2>HOW TO PLAY</h2>
-<div class="scores" style="max-width:295px;line-height:1.6;font-size:10px">
+<div class="scores" style="max-width:min(94%,calc(var(--sc,3)*100px));line-height:1.65;font-size:calc(var(--sc,3)*4.2px)">
 <b style="color:#e0e0a0">CONTROLS</b><br>
 ←↑↓→ / WASD — Move<br>
 SPACE / Z — Fire · <b>hold to charge</b><br>
@@ -371,7 +372,7 @@ function showCredits(){
 <span style="color:#e0e0a0;letter-spacing:2px">SKY FORTRESS ULTIMATE</span><br>
 <span style="color:#8080a0">v${GAME_VERSION}</span><br><br>
 <span style="color:#80ff80">Created by</span><br>
-<b style="color:#ffffa0;font-size:14px">Arthur McConnell</b><br><br>
+<b style="color:#ffffa0;font-size:calc(var(--sc,3)*5.5px)">Arthur McConnell</b><br><br>
 <span style="color:#9090b0">Procedural stages · Hangar unlocks<br>
 Graze · Charge · Boss phases · Ranks</span>
 </p>
@@ -385,7 +386,7 @@ function rShop(){
   const ships=PLANES.map((pl,i)=>`<span class="btn ${i===hSel&&shopTab===0?'sel':''} ${isUn(pl.id)?'':'locked'}" data-ship="${i}">${isUn(pl.id)?pl.name:'???'}</span>`).join('');
   const ups=UPGS.map((u,i)=>{
     const lv=meta.up[u.id]||0,cost=upCost(u),maxed=lv>=u.max;
-    return `<div style="margin:3px 0;font-size:10px"><span class="btn ${shopTab===1&&i===hSel?'sel':''}" data-up="${i}">${u.name}</span> Lv${lv}/${u.max} ${maxed?'<span style="color:#80ff80">MAX</span>':cost+' cr'}</div>`;
+    return `<div style="margin:4px 0;font-size:calc(var(--sc,3)*4.2px)"><span class="btn ${shopTab===1&&i===hSel?'sel':''}" data-up="${i}">${u.name}</span> Lv${lv}/${u.max} ${maxed?'<span style="color:#80ff80">MAX</span>':cost+' cr'}</div>`;
   }).join('');
   showOv();
   overlay.innerHTML=`<h2>HANGAR</h2>
@@ -399,7 +400,7 @@ ${un?'<span class="btn" id="sel-ship">SELECT</span>':''}
 <span class="btn" id="shop-start">▶ START</span>
 <span class="btn" id="shop-back">BACK</span></p>`:
 `<div style="margin:4px 0;text-align:left;max-width:280px">${ups}</div>
-<p style="font-size:10px;color:#a0a0c0">${UPGS[Math.min(hSel,UPGS.length-1)].desc}</p>
+<p style="font-size:calc(var(--sc,3)*4.2px);color:#a0a0c0">${UPGS[Math.min(hSel,UPGS.length-1)].desc}</p>
 <p style="margin-top:8px"><span class="btn" id="buy-up">BUY</span>
 <span class="btn" id="shop-start">▶ START</span>
 <span class="btn" id="shop-back">BACK</span></p>`}
@@ -445,12 +446,12 @@ rect(x-4,y+10,5,4,frame%4<2?'#ff4020':'#ff8040');rect(x-4,y+18,5,4,frame%4<2?'#f
 if(b.ph>=1){const glow=b.wF>0||frame%6<3;rect(x+22,y+14,8,6,glow?'#ffff80':'#c04040');rect(x+24,y+15,4,4,glow?'#fff':'#ff8080')}
 rect(x,y-10,48,4,'#202020');rect(x,y-10,48*(b.hp/b.mHp),4,b.hp>b.mHp*.5?'#40c040':b.hp>b.mHp*.25?'#c0c040':'#c04040');
 for(let i=0;i<b.mPh;i++)rect(x+i*8,y-15,6,3,i<b.ph?'#505050':'#e0e060');
-X.fillStyle='#c0c0e0';X.font='7px monospace';X.fillText(b.arch||'',x,y-18);
+X.fillStyle='#c0c0e0';X.font='9px monospace';X.fillText(b.arch||'',x,y-18);
 if(b.tele>0){X.globalAlpha=.25+Math.sin(frame*.4)*.15;X.strokeStyle='#ff8080';X.lineWidth=1;X.beginPath();X.arc(x+10,y+18,8+b.tele*.3,0,Math.PI*2);X.stroke();X.globalAlpha=1}
 if(b.hF>0){X.globalAlpha=.4;rect(x,y,50,36,'#fff');X.globalAlpha=1}}
 function dMid(m){rect(m.x,m.y+4,28,12,'#705080');rect(m.x+2,m.y+2,24,3,'#806090');rect(m.x+20,m.y+6,8,6,'#302040');rect(m.x+6,m.y+7,10,4,'#9070a0');
 rect(m.x,m.y-7,28,3,'#202020');rect(m.x,m.y-7,28*(m.hp/m.mHp),3,'#c08040');
-X.fillStyle='#b0a0c0';X.font='6px monospace';X.fillText(m.arch||'',m.x,m.y-10);
+X.fillStyle='#b0a0c0';X.font='8px monospace';X.fillText(m.arch||'',m.x,m.y-10);
 if(m.hF>0){X.globalAlpha=.4;rect(m.x,m.y,30,20,'#fff');X.globalAlpha=1}}
 function dBul(b){
   if(b.en){
@@ -511,9 +512,9 @@ function killB(){
   floatTxt(bx-30,by-20,'BOSS DEFEATED!','#ffff40');
   boss=null;bossOn=false;const rank=cRank();state='stageclear';
   const g=Math.floor(score*.02)+stage*55;meta.cr+=g;if(!meta.best||rank==='S'||(meta.best!=='S'&&rank==='A'))meta.best=rank;saveM();
-  ovHTML('STAGE '+stage+' CLEAR',`<p style="line-height:1.7">${theme.n}<br>Score <b>${String(score).padStart(6,'0')}</b><br>Rank <b style="color:#ffff80;font-size:16px">${rank}</b>${noDmg?' · <span style="color:#80ff80">NO DAMAGE</span>':''}<br>Graze ${graze} · +${g} credits</p><p class="blink">PRESS SPACE</p>`);SFX.clear();UI()}
+  ovHTML('STAGE '+stage+' CLEAR',`<p style="line-height:1.7">${theme.n}<br>Score <b>${String(score).padStart(6,'0')}</b><br>Rank <b style="color:#ffff80;font-size:calc(var(--sc,3)*6px)">${rank}</b>${noDmg?' · <span style="color:#80ff80">NO DAMAGE</span>':''}<br>Graze ${graze} · +${g} credits</p><p class="blink">PRESS SPACE</p>`);SFX.clear();UI()}
 function cRank(){const b=score-sScore,g=graze;if(noDmg&&g>40&&b>8000)return'S';if(noDmg||(g>25&&b>5000))return'A';if(b>3000||g>15)return'B';return'C'}
-function hurt(){if(inv>0)return;noDmg=false;if(shield>0){shield--;inv=55;SFX.hurt();shake=7;hitstop=4;flash=4;UI();return}lives--;inv=95;boom(pl.x+10,pl.y+6,true);SFX.hurt();shake=12;hitstop=7;flash=8;combo=1;UI();if(lives<=0){state='gameover';const rank=cRank();saveHS(score,rank);const g=Math.floor(score*.015);meta.cr+=g;saveM();ovHTML('GAME OVER',`<p>Final Score<br><b style="font-size:18px;color:#ffff80">${String(score).padStart(6,'0')}</b><br>Rank ${rank}<br>+${g} credits</p><p style="margin-top:10px"><span class="btn" id="go-menu">MENU</span> <span class="btn" id="go-shop">HANGAR</span></p><p class="blink">SPACE — menu</p><div class="scores">${loadHS().map((e,i)=>`${i+1}. ${String(e.s).padStart(6,'0')} ${e.r||''}`).join('<br>')}</div>`);bindBtn('go-menu',()=>{showMenu._skipDaily=true;showMenu()});bindBtn('go-shop',showShop)}}
+function hurt(){if(inv>0)return;noDmg=false;if(shield>0){shield--;inv=55;SFX.hurt();shake=7;hitstop=4;flash=4;UI();return}lives--;inv=95;boom(pl.x+10,pl.y+6,true);SFX.hurt();shake=12;hitstop=7;flash=8;combo=1;UI();if(lives<=0){state='gameover';const rank=cRank();saveHS(score,rank);const g=Math.floor(score*.015);meta.cr+=g;saveM();ovHTML('GAME OVER',`<p>Final Score<br><b style="font-size:calc(var(--sc,3)*7px);color:#ffff80">${String(score).padStart(6,'0')}</b><br>Rank ${rank}<br>+${g} credits</p><p style="margin-top:10px"><span class="btn" id="go-menu">MENU</span> <span class="btn" id="go-shop">HANGAR</span></p><p class="blink">SPACE — menu</p><div class="scores">${loadHS().map((e,i)=>`${i+1}. ${String(e.s).padStart(6,'0')} ${e.r||''}`).join('<br>')}</div>`);bindBtn('go-menu',()=>{showMenu._skipDaily=true;showMenu()});bindBtn('go-shop',showShop)}}
 
 function startGame(){
   try{
@@ -647,7 +648,7 @@ dHaz();for(const t of trails){X.globalAlpha=t.life/7;rect(t.x,t.y,3,2,t.col)}X.g
   if(inv<=0||(inv/3|0)%2===0)dPl(pl.x,pl.y,inv>0);
   for(const p of parts){X.globalAlpha=Math.max(0,p.life/p.max);rect(p.x,p.y,p.sz,p.sz,p.col)}X.globalAlpha=1;
   /* floating score text */
-  for(const f of floats){X.globalAlpha=Math.min(1,f.life/15);X.fillStyle=f.col;X.font='bold 8px monospace';X.fillText(f.t,f.x|0,f.y|0)}X.globalAlpha=1;
+  for(const f of floats){X.globalAlpha=Math.min(1,f.life/15);X.fillStyle=f.col;X.font='bold 10px monospace';X.fillText(f.t,f.x|0,f.y|0)}X.globalAlpha=1;
   /* scanlines */
   X.fillStyle='rgba(0,0,0,.07)';for(let y=0;y<H;y+=2)X.fillRect(0,y,W,1);
   if(flash>0){X.fillStyle=`rgba(255,240,200,${.08+flash*.03})`;X.fillRect(-10,-10,W+20,H+20)}
