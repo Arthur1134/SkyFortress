@@ -36,3 +36,7 @@ Then cycles storm, desert, night, arctic, volcanic. Stages are much longer.
 2. **Cave Run** — tunnel with stalactites / floating rocks
 3. **Neon City** — skyline flyover with lit windows
 Then storm, desert, night, arctic, volcanic. Stages are much longer.
+
+
+## Bosses (v0.3.2)
+Each stage has a unique boss (Dawn Gunship, Cave Mech Bat that dives at you, Neon Tower, Storm Carrier, Sand Scarab, Shadow Raider, Ice Breaker, Magma Wyrm). Bosses have much higher HP.
