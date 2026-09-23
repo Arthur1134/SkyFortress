@@ -1,9 +1,14 @@
-# Sky Fortress Ultimate
+﻿# Sky Fortress Ultimate
 
-Pixel shoot-em-up (shmup): stages, bosses, hangar unlocks, graze, charge shot, bombs, meta upgrades.
+Pixel shmup campaign (HTML5). Play on [GitHub Pages](https://arthur1134.github.io/SkyFortress/).
+
+**Version:** 0.3.10
 
 ## Play
+- Pages: https://arthur1134.github.io/SkyFortress/
+- RUN.world (private share): see creator dashboard / Bot for current key link
 
+<<<<<<< HEAD
 Open `index.html` or the [GitHub Pages](https://arthur1134.github.io/SkyFortress/) build.
 
 ## Controls
@@ -44,3 +49,7 @@ Each stage has a unique boss (Dawn Gunship, Cave Mech Bat that dives at you, Neo
 
 ## Dev options (remove before publish)
 Options → Unlimited health is a playtest god mode stored in `sf_settings`. Strip `godMode` before marketplace release.
+=======
+## Local
+Open `index.html` or use My Library Launcher (Sky Fortress Ultimate).
+>>>>>>> fd6c0dc (Ship Sky Fortress Ultimate v0.3.10 (easy default, gamepad, achievements, RUN ready))
