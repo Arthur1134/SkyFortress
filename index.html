@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="author" content="Arthur McConnell"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Sky Fortress Ultimate</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -19,6 +20,11 @@ canvas{display:block;background:#000;image-rendering:pixelated;image-rendering:c
 #overlay .btn{display:inline-block;margin:calc(var(--sc,3)*2px) calc(var(--sc,3)*1.5px);padding:calc(var(--sc,3)*3px) calc(var(--sc,3)*5px);border:2px solid #707090;background:linear-gradient(#222238,#14142a);color:#d0d0f0;font:calc(var(--sc,3)*5px) monospace;cursor:pointer;min-width:calc(var(--sc,3)*28px)}
 #overlay .btn:hover,#overlay .btn.sel{background:linear-gradient(#404068,#282850);color:#ffffa0;border-color:#a0a0c0;box-shadow:0 0 8px rgba(160,160,200,.25)}
 #overlay .btn.locked{opacity:.35;cursor:default}
+#overlay .btn.ad{border-color:#44ff88;color:#44ff88}
+#overlay .btn.ad:hover,#overlay .btn.ad.sel{background:linear-gradient(#1a3a28,#0e2418);color:#a0ffc0;border-color:#66ff99;box-shadow:0 0 8px rgba(68,255,136,.3)}
+#overlay .btn.ad[disabled],#overlay .btn.ad.locked{opacity:.45;cursor:default;color:#66aa77;border-color:#66aa77}
+#overlay .ad-status{font-size:calc(var(--sc,3)*3.8px);color:#80c090;margin-top:4px;min-height:1.2em}
+
 #overlay .btn.gp-focus{outline:2px solid #80ffff;outline-offset:2px;background:linear-gradient(#404068,#282850);color:#ffffa0;border-color:#a0c0d0;box-shadow:0 0 10px rgba(128,255,255,.4)}
 #overlay .scores{margin-top:calc(var(--sc,3)*3px);font-size:calc(var(--sc,3)*4.5px);color:#9090b0;text-align:left}
 #overlay .panel{width:100%;max-width:min(96%,calc(var(--sc,3)*110px));margin:0 auto;flex:0 0 auto}
@@ -167,11 +173,27 @@ body.playing #update-banner{display:none!important}
 <div id="splash"><div class="stars" id="splash-stars"></div><div class="logo">SKY FORTRESS</div><div class="tag">ULTIMATE · PIXEL SHMUP</div><div class="prompt">PRESS SPACE / CLICK / TAP</div></div>
 <div id="touch"><div class="pad" id="pad-move"></div><div class="pad" id="pad-fire"></div><div class="pad" id="pad-bomb"></div></div>
 </div>
-<div id="version-badge">v0.3.9</div>
+<div id="version-badge">v0.3.11</div>
 <div id="update-banner"><p id="update-banner-text">Update available</p><button onclick="location.reload()">RELOAD</button><button onclick="document.getElementById('update-banner').style.display='none'">LATER</button></div>
 <div id="controls">←↑↓→/WASD · SPACE/Z/LMB fire(hold=charge) · X/B bomb · P pause · M music · R slow-mo · V vol<br>
 Gamepad: stick/D-pad move · A fire(hold=charge) · B bomb · Start/Options pause · menus: stick focus · A confirm · B back<br>
 Hangar · Graze · Charge · Boss phases · Hazards · Ranks</div>
+<script>
+// Default no-op until / unless rundot-ads.js loads (RUN host). Safe on desktop/itch/Pages/local.
+window.SkyAds = window.SkyAds || {
+  available: false,
+  async isRewardedReady() { return false; },
+  async showRewarded() { return false; },
+  async showInterstitial() { return false; }
+};
+</script>
+<script type="module">
+try {
+  await import('./rundot-ads.js');
+} catch (_) {
+  /* SDK bundle missing or blocked — keep no-op SkyAds */
+}
+</script>
 <script>
 (()=>{
 const C=document.getElementById('c'),X=C.getContext('2d'),W=320,H=200;
@@ -206,7 +228,7 @@ fitCanvas();addEventListener('resize',fitCanvas);X.imageSmoothingEnabled=false;
 const $=id=>document.getElementById(id);
 const scoreEl=$('score'),comboEl=$('combo'),grazeEl=$('graze'),weaponEl=$('weapon'),livesEl=$('lives'),shieldEl=$('shield'),bombsEl=$('bombs'),stageEl=$('stage'),bannerEl=$('banner'),overlay=$('overlay'),touchLayer=$('touch'),splashEl=$('splash');
 
-const GAME_VERSION='0.3.10';
+const GAME_VERSION='0.3.11';
 const UPDATE_CHECK_URL='https://arthur1134.github.io/SkyFortress/version.json';
 function syncVersionBadge(){const el=document.getElementById('version-badge');if(el)el.textContent='v'+GAME_VERSION}
 function compareSemver(a,b){const pa=String(a).split('.').map(n=>parseInt(n,10)||0),pb=String(b).split('.').map(n=>parseInt(n,10)||0);for(let i=0;i<3;i++){const d=(pa[i]||0)-(pb[i]||0);if(d)return d>0?1:-1}return 0}
@@ -221,10 +243,9 @@ let rng=mulberry32(Date.now());
 const R=()=>rng(),RI=(a,b)=>a+Math.floor(R()*(b-a+1)),P=a=>a[Math.floor(R()*a.length)],CH=p=>R()<p;
 
 let actx=null,vol=.7,musicOn=true,mTimer=0,mStep=0;
-/* DEV ONLY — remove godMode before marketplace publish */
-let godMode=false;
-try{const _sv=_safeGet('sf_settings');if(_sv){const s=JSON.parse(_sv);if(typeof s.vol==='number')vol=s.vol;if(typeof s.musicOn==='boolean')musicOn=s.musicOn;if(s.godMode)godMode=!!s.godMode}}catch(e){}
-function saveSettings(){try{_safeSet('sf_settings',JSON.stringify({vol,musicOn,godMode}))}catch(e){}}
+/* shipping build: unlimited-health DEV toggle removed */
+try{const _sv=_safeGet('sf_settings');if(_sv){const s=JSON.parse(_sv);if(typeof s.vol==='number')vol=s.vol;if(typeof s.musicOn==='boolean')musicOn=s.musicOn}}catch(e){}
+function saveSettings(){try{_safeSet('sf_settings',JSON.stringify({vol,musicOn}))}catch(e){}}
 function setVol(v){vol=Math.max(0,Math.min(1,v));saveSettings();try{if(actx&&actx.gain){}}catch(e){}return vol}
 function cycleVol(){vol=vol>.55?.25:vol>.08?0:.7;saveSettings();return vol}
 function volLabel(){return vol<=0?'MUTE':vol<.4?'LOW':vol<.75?'MED':'HIGH'}
@@ -342,7 +363,7 @@ function achievementsBack(){
 }
 function showPauseOv(){
   state='pause';
-  ovHTML('PAUSED',`<p style="line-height:1.7">P — resume<br>M — music <b style="color:#80ff80">${musicOn?'ON':'OFF'}</b><br>R — slow-mo <b>${slow?'ON':'OFF'}</b><br>V — volume <b>${volLabel()}</b>${godMode?'<br><span style="color:#ff8080">DEV: UNLIMITED HEALTH</span>':''}</p><p style="font-size:calc(var(--sc,3)*4.5px);color:#8080a0;margin-top:6px">Seed ${seed} · ${theme.n}<br>Boss: ${bArch.n} · Credits: ${meta.cr}<br>Stage ${stage} · Combo x${combo} · Graze ${graze}</p><p style="margin-top:8px"><span class="btn" id="p-ach">ACHIEVEMENTS</span></p><p class="blink">PRESS P</p>`);
+  ovHTML('PAUSED',`<p style="line-height:1.7">P — resume<br>M — music <b style="color:#80ff80">${musicOn?'ON':'OFF'}</b><br>R — slow-mo <b>${slow?'ON':'OFF'}</b><br>V — volume <b>${volLabel()}</b></p><p style="font-size:calc(var(--sc,3)*4.5px);color:#8080a0;margin-top:6px">Seed ${seed} · ${theme.n}<br>Boss: ${bArch.n} · Credits: ${meta.cr}<br>Stage ${stage} · Combo x${combo} · Graze ${graze}</p><p style="margin-top:8px"><span class="btn" id="p-ach">ACHIEVEMENTS</span></p><p class="blink">PRESS P</p>`);
   bindBtn('p-ach',()=>{_achFrom='pause';showAchievements()});
 }
 
@@ -460,6 +481,7 @@ return{n:theme.n,seed,boss:bArch.n,kind}}
 function wE(ins){const b=theme._b||theme.bias;const w=[b[0]*(1.15-ins*.3),b[1]*(.65+ins*.55),b[2]*(.85+ins*.4),b[3]*(.9+ins*.2),b[4]*(.45+ins*.85),b[5]*(.35+ins*.75)];const t=w.reduce((a,c)=>a+c,0);let r=R()*t;for(let i=0;i<w.length;i++){r-=w[i];if(r<=0)return i}return 0}
 
 let state='splash',score=0,lives=3,shield=3,bombs=2,inv=0,shake=0,hitstop=0,frame=0;
+let adContinueUsed=false,adBombUsedThisBreak=false,lastInterstitialStage=0;
 let stage=1,bossOn=false,midOn=false,combo=1,cTimer=0,graze=0,noDmg=true,sScore=0,runBest='C',_clearInfo=null;
 let lastT=0,bTimer=0,slow=false,diff=0,charge=0,charging=false,muzzle=0,recoil=0,boss=null,mid=null;
 let splashDone=false,splashT=0,flash=0;
@@ -494,7 +516,7 @@ if(e.code==='Space'||e.code==='KeyZ'){
   if(state==='hangar'||state==='shop'){return}
   if(state==='menu'){startGame();return}
   if(state==='gameover'||state==='victory'){showMenu();return}
-  if(state==='stageclear'){withUiLock(()=>showNextBriefing());return}
+  if(state==='stageclear'){withUiLock(()=>advanceAfterStageClear());return}
   if(state==='briefing'){withUiLock(()=>beginNextStage());return}
   if(state==='achievements'){achievementsBack();return}
   if(state==='help'||state==='credits'||state==='options'){showMenu._skipDaily=true;showMenu();return}
@@ -519,7 +541,7 @@ fp.addEventListener('touchstart',e=>{e.preventDefault();tch.fire=true;try{audio(
   else if(state==='menu')startGame();
   else if(state==='achievements'){achievementsBack()}
   else if(state==='gameover'||state==='victory'||state==='help'||state==='credits'||state==='daily'||state==='options'){showMenu._skipDaily=true;showMenu()}
-  else if(state==='stageclear')withUiLock(()=>showNextBriefing());
+  else if(state==='stageclear')withUiLock(()=>advanceAfterStageClear());
   else if(state==='briefing')withUiLock(()=>beginNextStage())},{passive:false});
 fp.addEventListener('touchend',()=>{tch.fire=false;if(charging)relCharge()});
 bp.addEventListener('touchstart',e=>{e.preventDefault();tch.bomb=true},{passive:false});bp.addEventListener('touchend',()=>{tch.bomb=false})
@@ -551,7 +573,7 @@ function onMouseFireDown(e){
   if(state==='hangar'||state==='shop'){return} /* stay in hangar; use START button only */
   if(state==='achievements'){achievementsBack();return}
   if(state==='gameover'||state==='victory'||state==='help'||state==='credits'||state==='options'){showMenu._skipDaily=true;showMenu();return}
-  if(state==='stageclear'){withUiLock(()=>showNextBriefing());return}
+  if(state==='stageclear'){withUiLock(()=>advanceAfterStageClear());return}
   if(state==='briefing'){withUiLock(()=>beginNextStage());return}
 }
 function onMouseFireUp(e){
@@ -704,18 +726,12 @@ function showOptions(){
 <span class="btn" id="mus-tog">${musicOn?'ON':'OFF'}</span></div>
 <div class="opt-row"><span class="opt-label">Mute all</span>
 <span class="btn" id="vol-mute">${vol<=0?'UNMUTE':'MUTE'}</span></div>
-<hr style="border:none;border-top:1px solid #303050;margin:10px 0">
-<p class="dev-tag">DEV TEST — REMOVE BEFORE PUBLISH</p>
-<div class="opt-row"><span class="opt-label">Unlimited health</span>
-<span class="btn" id="god-tog" style="${godMode?'border-color:#ff6060;color:#ffb0b0':''}">${godMode?'ON':'OFF'}</span></div>
-<p style="font-size:calc(var(--sc,3)*3.8px);color:#808090;margin-top:4px">When ON, hits do not reduce lives or shields (for playtesting).</p>
 <p style="margin-top:12px"><span class="btn" id="opt-back">BACK</span></p>
 <p class="blink">ESC / BACK</p></div>`;
   bindBtn('vol-down',()=>{setVol(Math.max(0,vol-.125));showOptions()});
   bindBtn('vol-up',()=>{setVol(Math.min(1,vol+.125));showOptions()});
   bindBtn('vol-mute',()=>{setVol(vol<=0?.7:0);showOptions()});
   bindBtn('mus-tog',()=>{musicOn=!musicOn;saveSettings();showOptions()});
-  bindBtn('god-tog',()=>{godMode=!godMode;saveSettings();showOptions()});
   bindBtn('opt-back',()=>{showMenu._skipDaily=true;showMenu()});
 }
 function showHelp(){
@@ -955,7 +971,17 @@ function killB(){
   else showStageClear();
 }
 function cRank(){const b=score-sScore,g=graze;if(noDmg&&g>40&&b>8000)return'S';if(noDmg||(g>25&&b>5000))return'A';if(b>3000||g>15)return'B';return'C'}
-function hurt(){if(inv>0)return;if(godMode){inv=20;SFX.hurt();shake=3;flash=2;UI();return}noDmg=false;if(shield>0){shield--;inv=diff===0?78:55;SFX.hurt();shake=7;hitstop=4;flash=4;UI();return}lives--;inv=diff===0?130:95;boom(pl.x+10,pl.y+6,true);SFX.hurt();shake=12;hitstop=7;flash=8;combo=1;UI();if(lives<=0){state='gameover';const rank=cRank();saveHS(score,rank);const g=Math.floor(score*.015);meta.cr+=g;saveM();ovHTML('GAME OVER',`<p>Final Score<br><b style="font-size:calc(var(--sc,3)*7px);color:#ffff80">${String(score).padStart(6,'0')}</b><br>Rank ${rank}<br>+${g} credits</p><p style="margin-top:10px"><span class="btn" id="go-menu">MENU</span> <span class="btn" id="go-shop">HANGAR</span></p><p class="blink">SPACE — menu</p><div class="scores">${loadHS().map((e,i)=>`${i+1}. ${String(e.s).padStart(6,'0')} ${e.r||''}`).join('<br>')}</div>`);bindBtn('go-menu',()=>{showMenu._skipDaily=true;showMenu()});bindBtn('go-shop',showShop)}}
+function hurt(){if(inv>0)return;noDmg=false;if(shield>0){shield--;inv=diff===0?78:55;SFX.hurt();shake=7;hitstop=4;flash=4;UI();return}lives--;inv=diff===0?130:95;boom(pl.x+10,pl.y+6,true);SFX.hurt();shake=12;hitstop=7;flash=8;combo=1;UI();if(lives<=0){state='gameover';const rank=cRank();saveHS(score,rank);const g=Math.floor(score*.015);meta.cr+=g;saveM();const continueHtml=adContinueUsed?'':`<p style="margin-top:8px"><span class="btn ad" id="ad-continue-btn" disabled>WATCH AD FOR CONTINUE</span></p><div class="ad-status" id="ad-continue-status"></div>`;ovHTML('GAME OVER',`<p>Final Score<br><b style="font-size:calc(var(--sc,3)*7px);color:#ffff80">${String(score).padStart(6,'0')}</b><br>Rank ${rank}<br>+${g} credits</p>${continueHtml}<p style="margin-top:10px"><span class="btn" id="go-menu">MENU</span> <span class="btn" id="go-shop">HANGAR</span></p><p class="blink">SPACE — menu</p><div class="scores">${loadHS().map((e,i)=>`${i+1}. ${String(e.s).padStart(6,'0')} ${e.r||''}`).join('<br>')}</div>`);bindBtn('go-menu',()=>{showMenu._skipDaily=true;showMenu()});bindBtn('go-shop',showShop);wireAdContinueBtn()}}
+
+
+function skyAds(){try{return window.SkyAds||null}catch(_){return null}}
+async function tryRewardedAd(placement){try{const ads=skyAds();if(!ads||typeof ads.showRewarded!=='function')return false;return !!(await ads.showRewarded(placement))}catch(_){return false}}
+async function tryInterstitialAd(placement){try{const ads=skyAds();if(!ads||typeof ads.showInterstitial!=='function')return false;return !!(await ads.showInterstitial(placement))}catch(_){return false}}
+async function maybeShowStageInterstitial(){try{if(stage<2)return;if(stage===lastInterstitialStage)return;if(stage%2!==0)return;if(stage>=MAX_STAGES)return;lastInterstitialStage=stage;await tryInterstitialAd({adDisplayId:'stage_transition',adDisplayName:'Stage Transition'})}catch(_){}}
+function grantAdContinue(){lives=Math.max(1,lives+1);inv=diff===0?150:120;shield=Math.max(shield,1);state='play';hideOv();UI();try{banner('CONTINUE',70)}catch(e){}}
+function grantAdBomb(){bombs=Math.min(5,bombs+1);UI();try{banner('+1 BOMB',50)}catch(e){}}
+function wireAdContinueBtn(){const adBtn=overlay.querySelector('#ad-continue-btn');const adStatus=overlay.querySelector('#ad-continue-status');if(!adBtn)return;(async()=>{try{const ads=skyAds();const ready=ads&&typeof ads.isRewardedReady==='function'&&await ads.isRewardedReady();if(!ready||adContinueUsed){adBtn.style.display='none';if(adStatus)adStatus.style.display='none';return}adBtn.removeAttribute('disabled');adBtn.classList.remove('locked');adBtn.onclick=null;bindBtn('ad-continue-btn',async()=>{if(adContinueUsed)return;adBtn.setAttribute('disabled','');if(adStatus)adStatus.textContent='Loading ad…';const earned=await tryRewardedAd({adDisplayId:'continue',adDisplayName:'Continue After Death'});if(earned){adContinueUsed=true;if(adStatus)adStatus.textContent='Continue granted!';grantAdContinue()}else{if(adStatus)adStatus.textContent='No reward — ad unavailable or closed early.';adBtn.removeAttribute('disabled')}})}catch(_){adBtn.style.display='none';if(adStatus)adStatus.style.display='none'}})()}
+function wireAdBombBtn(){const adBtn=overlay.querySelector('#ad-bomb-btn');const adStatus=overlay.querySelector('#ad-bomb-status');if(!adBtn)return;(async()=>{try{const ads=skyAds();const ready=ads&&typeof ads.isRewardedReady==='function'&&await ads.isRewardedReady();if(!ready||adBombUsedThisBreak){adBtn.style.display='none';if(adStatus)adStatus.style.display='none';return}adBtn.removeAttribute('disabled');adBtn.classList.remove('locked');bindBtn('ad-bomb-btn',async()=>{if(adBombUsedThisBreak)return;adBtn.setAttribute('disabled','');if(adStatus)adStatus.textContent='Loading ad…';const earned=await tryRewardedAd({adDisplayId:'extra_bomb',adDisplayName:'Extra Bomb'});if(earned){adBombUsedThisBreak=true;grantAdBomb();if(adStatus)adStatus.textContent='Bomb granted!';adBtn.style.display='none'}else{if(adStatus)adStatus.textContent='No reward — try again or continue.';adBtn.removeAttribute('disabled')}})}catch(_){adBtn.style.display='none';if(adStatus)adStatus.style.display='none'}})()}
 
 function startGame(){
   try{
@@ -966,6 +992,7 @@ function startGame(){
     meta.sel=p.id;saveM();
     const up=meta.up||{};
     score=0;lives=p.hp+(up.life||0)+(diff===0?1:0);shield=Math.min(5,p.sh+(up.sh||0)+(diff===0?1:0));bombs=Math.min(5,p.bm+(up.bm||0)+(diff===0?1:0));
+    adContinueUsed=false;adBombUsedThisBreak=false;lastInterstitialStage=0;
     inv=0;shake=0;hitstop=0;frame=0;stage=1;flash=0;
     bossOn=false;midOn=false;boss=null;mid=null;combo=1;cTimer=0;graze=0;runGrazePeak=0;noDmg=true;sScore=0;runBest='C';_clearInfo=null;
     charge=0;charging=false;muzzle=0;recoil=0;
@@ -976,6 +1003,7 @@ function startGame(){
 }
 function showStageClear(){
   state='stageclear';showOv();
+  adBombUsedThisBreak=false;
   const info=_clearInfo||{stage,theme:theme.n,score,rank:cRank(),graze,credits:0,noDmg};
   overlay.innerHTML=`<div class="briefing-paper">
 <span class="briefing-stamp">CLEAR</span>
@@ -986,10 +1014,17 @@ function showStageClear(){
 Rank <b style="color:#8a2020;font-size:1.25em">${info.rank}</b>${info.noDmg?' · <span style="color:#206020">NO DAMAGE</span>':''}<br>
 Graze ${info.graze} · Credits <b style="color:#206020">+${info.credits}</b></div>
 <div class="briefing-actions">
+<span class="btn ad" id="ad-bomb-btn" disabled>WATCH AD FOR +1 BOMB</span>
+<div class="ad-status" id="ad-bomb-status"></div>
 <span class="btn briefing-go" id="sc-continue">CONTINUE</span>
 <p class="briefing-hint blink">SPACE / CONTINUE</p>
 </div></div>`;
-  bindBtn('sc-continue',()=>showNextBriefing());
+  bindBtn('sc-continue',()=>advanceAfterStageClear());
+  wireAdBombBtn();
+}
+async function advanceAfterStageClear(){
+  await maybeShowStageInterstitial();
+  showNextBriefing();
 }
 function showNextBriefing(){
   const next=stage+1;

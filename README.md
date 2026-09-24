@@ -2,7 +2,7 @@
 
 Pixel shmup campaign (HTML5). Play on [GitHub Pages](https://arthur1134.github.io/SkyFortress/).
 
-**Version:** 0.3.10
+**Version:** 0.3.11
 
 ## Play
 - Pages: https://arthur1134.github.io/SkyFortress/
@@ -10,3 +10,7 @@ Pixel shmup campaign (HTML5). Play on [GitHub Pages](https://arthur1134.github.i
 
 ## Notes
 Easy is the default difficulty. Gamepad, achievements, mobile fill, Hangar shop, and RUN.world deploy config included.
+
+## Credits
+
+Arthur McConnell
