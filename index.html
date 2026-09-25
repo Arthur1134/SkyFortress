@@ -2,6 +2,10 @@
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="author" content="Arthur McConnell"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Sky Fortress Ultimate</title>
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#1a0f3c">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#06060e;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;font-family:"Courier New",monospace;color:#c0c0c0;overflow:hidden;user-select:none;touch-action:none}
@@ -60,10 +64,11 @@ canvas{display:block;background:#000;image-rendering:pixelated;image-rendering:c
 #update-banner button{margin:6px;padding:6px 12px;font:13px monospace;cursor:pointer;background:#181828;border:1px solid #606080;color:#c0c0e0}
 
 /* —— War-paper mission briefing / stage clear —— */
+#overlay{--pu:calc(var(--sc,3)*1.45px)}
 #overlay .briefing-paper{
-  position:relative;width:min(96%,calc(var(--sc,3)*110px));max-width:100%;
-  padding:calc(var(--sc,3)*6px) calc(var(--sc,3)*5px) calc(var(--sc,3)*4px);
-  margin:0 auto;text-align:left;
+  position:relative;width:min(96%,calc(var(--pu)*112));max-width:100%;
+  padding:calc(var(--pu)*6) calc(var(--pu)*5.5) calc(var(--pu)*4);
+  margin:auto;text-align:left;flex-shrink:0;
   background:linear-gradient(165deg,#e8d9b0 0%,#d4c090 40%,#c8b078 100%);
   color:#2a2210;border:2px solid #8a7040;
   box-shadow:0 0 0 3px #3a2a10,6px 8px 0 #000a,inset 0 0 40px #0002;
@@ -73,41 +78,69 @@ canvas{display:block;background:#000;image-rendering:pixelated;image-rendering:c
   content:'';position:absolute;inset:8px;border:1px dashed #8a704088;pointer-events:none
 }
 #overlay .briefing-stamp{
-  position:absolute;top:calc(var(--sc,3)*3px);right:calc(var(--sc,3)*3px);
+  position:absolute;top:calc(var(--pu)*3.5);right:calc(var(--pu)*3.5);
   transform:rotate(12deg);border:2px solid #c02020;color:#c02020;
-  font-size:calc(var(--sc,3)*3.5px);padding:calc(var(--sc,3)*1.5px) calc(var(--sc,3)*2px);
+  font-size:calc(var(--pu)*3.6);padding:calc(var(--pu)*1.5) calc(var(--pu)*2.2);
   letter-spacing:1px;opacity:.85;text-transform:uppercase;z-index:2;background:transparent
 }
 #overlay .briefing-header{
-  font-size:calc(var(--sc,3)*3.8px);color:#5a4020;letter-spacing:2px;
-  margin-bottom:calc(var(--sc,3)*2px);text-transform:uppercase
+  font-size:calc(var(--pu)*3.8);color:#5a4020;letter-spacing:2px;
+  margin-bottom:calc(var(--pu)*2.2);text-transform:uppercase
 }
 #overlay .briefing-paper h2,#overlay .briefing-title{
-  font-size:calc(var(--sc,3)*6.5px);color:#1a1408;margin:0 0 calc(var(--sc,3)*2px);
+  font-size:calc(var(--pu)*7);color:#1a1408;margin:0 0 calc(var(--pu)*2.2);
   letter-spacing:1px;text-shadow:none;line-height:1.35
 }
-#overlay .briefing-theme{font-size:calc(var(--sc,3)*4.5px);color:#5a4820;margin-bottom:calc(var(--sc,3)*3px);font-weight:bold}
-#overlay .briefing-stats{font-size:calc(var(--sc,3)*4.2px);line-height:1.65;color:#2a2210;margin-bottom:calc(var(--sc,3)*2px)}
-#overlay .briefing-obj-label{font-size:calc(var(--sc,3)*3.5px);color:#8a2020;letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
+#overlay .briefing-theme{font-size:calc(var(--pu)*4.8);color:#5a4820;margin-bottom:calc(var(--pu)*3);font-weight:bold}
+#overlay .briefing-stats{font-size:calc(var(--pu)*4.8);line-height:1.65;color:#2a2210;margin-bottom:calc(var(--pu)*2.2)}
+#overlay .briefing-obj-label{font-size:calc(var(--pu)*3.6);color:#8a2020;letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
 #overlay .briefing-objective{
-  font-size:calc(var(--sc,3)*4.5px);line-height:1.5;color:#1a1408;margin-bottom:calc(var(--sc,3)*3px);
-  font-weight:bold;border-left:3px solid #8a2020;padding-left:calc(var(--sc,3)*2.5px)
+  font-size:calc(var(--pu)*4.8);line-height:1.5;color:#1a1408;margin-bottom:calc(var(--pu)*3);
+  font-weight:bold;border-left:3px solid #8a2020;padding-left:calc(var(--pu)*2.5)
 }
-#overlay .briefing-flavor{font-size:calc(var(--sc,3)*3.8px);line-height:1.45;color:#4a3a20;font-style:italic;margin-bottom:calc(var(--sc,3)*2px)}
+#overlay .briefing-flavor{font-size:calc(var(--pu)*4.1);line-height:1.45;color:#4a3a20;font-style:italic;margin-bottom:calc(var(--pu)*2.2);max-width:none}
 #overlay .briefing-actions{
-  text-align:center;position:sticky;bottom:0;z-index:3;margin-top:calc(var(--sc,3)*2px);
-  padding:calc(var(--sc,3)*3px) 0 calc(var(--sc,3)*1px);
+  text-align:center;position:sticky;bottom:0;z-index:3;margin-top:calc(var(--pu)*2.2);
+  padding:calc(var(--pu)*3) 0 calc(var(--pu)*1);
   background:linear-gradient(180deg,transparent 0%,#d4c090 28%,#c8b078 100%)
 }
 #overlay .briefing-actions .btn,#overlay .btn.briefing-go{
   border-color:#8a2020;color:#8a2020;
-  background:linear-gradient(180deg,#f0e0b0,#d4c090);box-shadow:3px 3px 0 #5a4020
+  background:linear-gradient(180deg,#f0e0b0,#d4c090);box-shadow:3px 3px 0 #5a4020;
+  font-size:calc(var(--pu)*4.4);padding:calc(var(--pu)*3) calc(var(--pu)*6)
 }
 #overlay .briefing-actions .btn:hover,#overlay .btn.briefing-go:hover{
   background:#8a2020;color:#f0e0b0;border-color:#8a2020
 }
-#overlay .briefing-hint{font-size:calc(var(--sc,3)*3.5px);color:#6a5828;margin-top:calc(var(--sc,3)*2px);letter-spacing:1px}
+#overlay .briefing-hint{font-size:calc(var(--pu)*3.6);color:#6a5828;margin-top:calc(var(--pu)*2);letter-spacing:1px;max-width:none}
+#overlay .briefing-paper .scores{font-size:calc(var(--pu)*3.8)!important;color:#4a3a20;max-width:none}
+#overlay .briefing-paper .btn.ad{background:linear-gradient(180deg,#e6f5e0,#c8e0b8);color:#1e6a32;border-color:#2a8a40;box-shadow:3px 3px 0 #3a5a30}
+#overlay .briefing-paper .ad-status{color:#2a5a30;font-size:calc(var(--pu)*3.4)}
 #overlay .briefing-paper .blink{color:#6a4020;animation:b .75s step-end infinite}
+
+/* —— Fill panels (achievements / hangar): scroll box uses the available height —— */
+#overlay .panel.fill{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;max-width:min(96%,calc(var(--sc,3)*150px))}
+#overlay .panel.fill>*{flex-shrink:0}
+#overlay .panel.fill>p{align-self:center}
+#overlay .panel.fill>.scroll-box{flex:0 1 auto;min-height:calc(var(--sc,3)*40px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+#overlay .scroll-box{border:1px solid #303050;background:rgba(10,10,30,.55);margin:4px 0;padding:2px 4px}
+/* —— Upgrade store rows: info left, BUY right —— */
+#overlay .up-row{display:flex;align-items:center;justify-content:space-between;gap:calc(var(--sc,3)*3px);padding:calc(var(--sc,3)*2px) calc(var(--sc,3)*2px);margin:calc(var(--sc,3)*1.2px) 0;border:1px solid #2a2a48;background:#12122a;text-align:left;cursor:pointer}
+#overlay .up-row.sel{border-color:#a0a0c0;background:linear-gradient(90deg,#26264a,#16162e);box-shadow:0 0 6px rgba(160,160,220,.2)}
+#overlay .up-info{flex:1 1 auto;min-width:0}
+#overlay .up-name{color:#e0e0a0;font-weight:bold;letter-spacing:1px;font-size:max(12px,calc(var(--sc,3)*4.4px))}
+#overlay .up-lv{color:#80c0ff;font-weight:normal;font-size:max(10.5px,calc(var(--sc,3)*3.6px));letter-spacing:0;margin-left:4px;white-space:nowrap}
+#overlay .up-desc{color:#9090b0;font-size:max(10.5px,calc(var(--sc,3)*3.6px));line-height:1.35;margin-top:2px}
+#overlay .up-pips{color:#80ff80;letter-spacing:2px;font-size:max(10px,calc(var(--sc,3)*3.4px))}
+#overlay .up-row .btn.up-buy{flex:0 0 auto;margin:0;min-width:calc(var(--sc,3)*30px);padding:calc(var(--sc,3)*2.2px) calc(var(--sc,3)*3px);line-height:1.25;text-align:center;font-size:max(12px,calc(var(--sc,3)*4.2px));touch-action:manipulation}
+#overlay .up-row .btn.up-buy small{display:block;font-size:.82em;color:#ffff80}
+#overlay .up-row .btn.up-buy.poor{opacity:.55}
+#overlay .up-row .btn.up-buy.poor small{color:#ff9090}
+#overlay .up-row .btn.up-buy.locked{opacity:.8;color:#80ff80;border-color:#406040}
+#overlay .shop-msg{min-height:1.3em;font-size:max(11px,calc(var(--sc,3)*3.8px));color:#ffb080;margin:2px 0}
+#overlay .ach-item{font-size:max(11.5px,calc(var(--sc,3)*4px))}
+#overlay .ach-item .ach-desc{font-size:max(10.5px,calc(var(--sc,3)*3.5px))}
+#overlay .ach-item .ach-ts{font-size:max(9.5px,calc(var(--sc,3)*3px))}
 
 /* —— Achievement toast —— */
 #ach-toast{position:absolute;top:10px;left:50%;transform:translateX(-50%) translateY(-8px);z-index:40;pointer-events:none;
@@ -118,15 +151,15 @@ canvas{display:block;background:#000;image-rendering:pixelated;image-rendering:c
 #ach-toast .ach-toast-label{font-size:9px;letter-spacing:2px;color:#8a2020;text-transform:uppercase;margin-bottom:3px}
 #ach-toast .ach-toast-name{font-size:13px;color:#1a1408;margin-bottom:2px}
 #ach-toast .ach-toast-desc{font-size:10px;color:#5a4820;font-weight:normal}
-#overlay .ach-list{width:100%;max-width:min(96%,calc(var(--sc,3)*110px));margin:0 auto;text-align:left;max-height:calc(var(--sc,3)*55px);overflow-y:auto;padding:2px 4px}
-#overlay .ach-item{margin:calc(var(--sc,3)*1.5px) 0;padding:calc(var(--sc,3)*2px) calc(var(--sc,3)*2.5px);border:1px solid #404060;background:#141428;font-size:calc(var(--sc,3)*4px);line-height:1.4}
+#overlay .ach-list{width:100%;margin:0 auto;text-align:left;overflow-y:auto;padding:2px 4px}
+#overlay .ach-item{margin:calc(var(--sc,3)*1.5px) 0;padding:calc(var(--sc,3)*2px) calc(var(--sc,3)*2.5px);border:1px solid #404060;background:#141428;line-height:1.4}
 #overlay .ach-item.on{border-color:#a09050;background:linear-gradient(90deg,#2a2418,#1a1828);color:#e8d9b0}
 #overlay .ach-item.off{opacity:.45;color:#707090}
 #overlay .ach-item .ach-name{font-weight:bold;letter-spacing:1px}
 #overlay .ach-item.on .ach-name{color:#ffffa0}
-#overlay .ach-item .ach-desc{font-size:calc(var(--sc,3)*3.5px);color:#9090b0;margin-top:2px}
+#overlay .ach-item .ach-desc{color:#9090b0;margin-top:2px}
 #overlay .ach-item.on .ach-desc{color:#c0b080}
-#overlay .ach-item .ach-ts{font-size:calc(var(--sc,3)*3px);color:#606080;margin-top:2px}
+#overlay .ach-item .ach-ts{color:#606080;margin-top:2px}
 
 body.playing #update-banner{display:none!important}
 
@@ -139,26 +172,26 @@ body.playing #update-banner{display:none!important}
   #controls{display:none!important;height:0;margin:0;padding:0;overflow:hidden}
   #version-badge{font-size:10px;bottom:4px;right:6px;opacity:.7}
   #overlay{padding:max(8px,env(safe-area-inset-top)) 10px max(12px,env(safe-area-inset-bottom));justify-content:flex-start}
+  #overlay .panel.fill{max-width:min(100%,780px)}
   #overlay h2{font-size:calc(var(--sc,3)*6px);margin:calc(var(--sc,3)*1px) 0}
   #overlay p{font-size:calc(var(--sc,3)*4.2px)}
   #overlay .btn{padding:calc(var(--sc,3)*3.5px) calc(var(--sc,3)*4px);min-width:calc(var(--sc,3)*26px);touch-action:manipulation}
-  #overlay .briefing-paper{width:100%;padding:14px 12px 10px;box-shadow:0 0 0 2px #3a2a10,3px 4px 0 #000a}
-  #overlay .briefing-stamp{position:static;display:inline-block;transform:none;margin:0 0 8px;font-size:10px;padding:5px 7px}
-  #overlay .briefing-header{font-size:10px;margin-bottom:8px}
-  #overlay .briefing-paper h2,#overlay .briefing-title{font-size:16px;margin-bottom:6px}
-  #overlay .briefing-theme{font-size:12px;margin-bottom:8px}
-  #overlay .briefing-stats{font-size:12px}
-  #overlay .briefing-objective{font-size:13px;margin-bottom:8px}
-  #overlay .briefing-flavor{font-size:11px;margin-bottom:8px}
+  #overlay{--pu:clamp(4px,min(1.2vw,.85vh),8px)}
+  #overlay .briefing-paper{width:min(100%,calc(var(--pu)*112));padding:calc(var(--pu)*4.5) calc(var(--pu)*4) calc(var(--pu)*3);box-shadow:0 0 0 2px #3a2a10,3px 4px 0 #000a}
+  #overlay .briefing-stamp{font-size:calc(var(--pu)*3);padding:calc(var(--pu)*1.1) calc(var(--pu)*1.6);top:calc(var(--pu)*3);right:calc(var(--pu)*3)}
   #overlay .briefing-hint{display:none}
-  #overlay .briefing-actions .btn,#overlay .btn.briefing-go{width:100%;max-width:100%;padding:14px 12px;font-size:14px}
+  #overlay .briefing-actions .btn,#overlay .btn.briefing-go{padding:calc(var(--pu)*2.6) calc(var(--pu)*5);font-size:calc(var(--pu)*4);margin:calc(var(--pu)*1) calc(var(--pu)*1)}
   .pad{width:96px;height:96px;bottom:16px}
   #pad-move{left:16px}
   #pad-fire{right:16px;width:72px;height:72px;bottom:22px}
   #pad-bomb{right:100px;width:52px;height:52px;bottom:28px}
 }
+@media (max-width:600px){
+  #overlay .briefing-actions .btn,#overlay .btn.briefing-go{display:block;width:100%;max-width:100%;margin:calc(var(--pu)*1.5) 0}
+}
 @media (max-width:900px) and (orientation:landscape),(max-height:500px){
   h1{display:none}
+  #overlay .briefing-stamp{position:static;display:inline-block;transform:none;margin:0 0 6px}
   #version-badge{display:none}
 }
 
@@ -173,7 +206,7 @@ body.playing #update-banner{display:none!important}
 <div id="splash"><div class="stars" id="splash-stars"></div><div class="logo">SKY FORTRESS</div><div class="tag">ULTIMATE · PIXEL SHMUP</div><div class="prompt">PRESS SPACE / CLICK / TAP</div></div>
 <div id="touch"><div class="pad" id="pad-move"></div><div class="pad" id="pad-fire"></div><div class="pad" id="pad-bomb"></div></div>
 </div>
-<div id="version-badge">v0.3.11</div>
+<div id="version-badge">v0.3.12</div>
 <div id="update-banner"><p id="update-banner-text">Update available</p><button onclick="location.reload()">RELOAD</button><button onclick="document.getElementById('update-banner').style.display='none'">LATER</button></div>
 <div id="controls">←↑↓→/WASD · SPACE/Z/LMB fire(hold=charge) · X/B bomb · P pause · M music · R slow-mo · V vol<br>
 Gamepad: stick/D-pad move · A fire(hold=charge) · B bomb · Start/Options pause · menus: stick focus · A confirm · B back<br>
@@ -228,7 +261,7 @@ fitCanvas();addEventListener('resize',fitCanvas);X.imageSmoothingEnabled=false;
 const $=id=>document.getElementById(id);
 const scoreEl=$('score'),comboEl=$('combo'),grazeEl=$('graze'),weaponEl=$('weapon'),livesEl=$('lives'),shieldEl=$('shield'),bombsEl=$('bombs'),stageEl=$('stage'),bannerEl=$('banner'),overlay=$('overlay'),touchLayer=$('touch'),splashEl=$('splash');
 
-const GAME_VERSION='0.3.11';
+const GAME_VERSION='0.3.12';
 const UPDATE_CHECK_URL='https://arthur1134.github.io/SkyFortress/version.json';
 function syncVersionBadge(){const el=document.getElementById('version-badge');if(el)el.textContent='v'+GAME_VERSION}
 function compareSemver(a,b){const pa=String(a).split('.').map(n=>parseInt(n,10)||0),pb=String(b).split('.').map(n=>parseInt(n,10)||0);for(let i=0;i<3;i++){const d=(pa[i]||0)-(pb[i]||0);if(d)return d>0?1:-1}return 0}
@@ -255,7 +288,163 @@ function audio(){if(!actx)actx=new(AudioContext||webkitAudioContext);if(actx.sta
 function tone(f,d,t,v,s){if(!actx)return;const n=actx.currentTime,o=actx.createOscillator(),g=actx.createGain();o.type=t||'square';o.frequency.setValueAtTime(f,n);if(s)o.frequency.exponentialRampToValueAtTime(Math.max(20,s),n+d);g.gain.setValueAtTime((v||.08)*vol,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(actx.destination);o.start(n);o.stop(n+d+.02)}
 function noise(d,v){if(!actx)return;const n=actx.currentTime,b=actx.createBuffer(1,actx.sampleRate*d,actx.sampleRate),dt=b.getChannelData(0);for(let i=0;i<dt.length;i++)dt[i]=Math.random()*2-1;const s=actx.createBufferSource();s.buffer=b;const g=actx.createGain();g.gain.setValueAtTime((v||.06)*vol,n);g.gain.exponentialRampToValueAtTime(.001,n+d);s.connect(g);g.connect(actx.destination);s.start(n)}
 const SFX={shoot:()=>tone(880,.045,'square',.035,440),charge:()=>tone(200,.08,'sawtooth',.03,600),cFire:()=>{tone(400,.18,'sawtooth',.1,80);noise(.12,.06)},laser:()=>tone(1200,.1,'sawtooth',.035,200),hit:()=>tone(240,.05,'square',.05,90),hitH:()=>{tone(140,.1,'square',.08,50);noise(.06,.05)},boom:()=>{noise(.25,.1);tone(100,.2,'sawtooth',.08,30)},pow:()=>{tone(523,.07,'square',.06);setTimeout(()=>tone(784,.09,'square',.06),70)},bomb:()=>{noise(.4,.13);tone(60,.35,'sawtooth',.1,15)},hurt:()=>tone(140,.14,'square',.09,55),boss:()=>{tone(100,.28,'square',.09);setTimeout(()=>tone(70,.4,'square',.09),180)},phase:()=>{tone(330,.1,'square',.07);setTimeout(()=>tone(440,.12,'square',.07),90);setTimeout(()=>tone(550,.14,'square',.06),180)},clear:()=>{tone(440,.08,'square',.05);setTimeout(()=>tone(660,.1,'square',.05),90);setTimeout(()=>tone(880,.12,'square',.05),180)},graze:()=>tone(1400,.025,'square',.022),unlock:()=>{tone(523,.1,'square',.07);setTimeout(()=>tone(659,.1,'square',.07),100);setTimeout(()=>tone(784,.15,'square',.07),200)},combo:()=>tone(880+combo*40,.04,'square',.03)};
-function music(dt){if(!musicOn||!actx||state!=='play')return;mTimer+=dt;if(mTimer>.13){mTimer=0;const n=mel[mStep%mel.length],b=bas[mStep%bas.length];if(n!==undefined)tone(220*Math.pow(2,n/12),.11,'square',.018);if(mStep%2===0)tone(110*Math.pow(2,b/12),.16,'triangle',.022);mStep++}}
+/* ===== Per-level background music with crossfades (v0.3.12) =====
+   Stage N plays track ((N-1) mod 4)+1  ->  assets/music/level1..4.mp3 (music: Edgard Jaude).
+   http(s): Web Audio AudioBufferSourceNode loop (gap-free; loopStart/loopEnd trimmed to skip encoder padding / silence).
+   file:// (local launcher) or decode trouble: HTMLAudioElement fallback with the same fade engine.
+   Crossfades are equal-power (sin/cos). STAGE CLEAR starts the fade to the next stage's track, so it is already
+   playing through the briefing and into the stage. Pause / ads / hidden tab duck then pause; resume continues. */
+const MUSIC_TRACKS=['assets/music/level1.mp3','assets/music/level2.mp3','assets/music/level3.mp3','assets/music/level4.mp3'];
+const MUSIC_LEVEL=.55,XF_LEVEL=2.5,XF_START=1.5,XF_END=2.2,XF_MENU=1.2,XF_TOGGLE=.7;
+function musicTrackFor(n){return(Math.max(1,n|0)-1)%MUSIC_TRACKS.length}
+const Music=(()=>{
+  const AC=window.AudioContext||window.webkitAudioContext;
+  let mode=(location.protocol==='file:'||!AC||typeof fetch!=='function')?'el':'wa';
+  const raw=[],rawP=[],buf=[],bufP=[],loopPts=[],failed=[],els=[];
+  let voices=[],cur=null,bus=null,busTarget=-1,busEl=0,adOn=false,adDucked=false,adT=0,paused=false,duckAt=0,lastN=0,lastPre=0;
+  const now=()=>performance.now()/1000;
+  const shIn=p=>Math.sin(p*Math.PI/2),shOut=p=>1-Math.cos(p*Math.PI/2);
+  function fetchRaw(t){
+    if(raw[t])return Promise.resolve(raw[t]);
+    if(!rawP[t])rawP[t]=fetch(MUSIC_TRACKS[t]).then(r=>{if(!r.ok){const e=new Error('HTTP '+r.status);e.http=true;throw e}return r.arrayBuffer()}).then(ab=>(raw[t]=ab)).catch(e=>{rawP[t]=null;if(e&&e.http)failed[t]=true;else if(!voices.some(v=>v.src))mode='el';else failed[t]=true;throw e});
+    return rawP[t];
+  }
+  function findLoop(b){
+    const sr=b.sampleRate,n=b.length,chs=[];for(let c=0;c<b.numberOfChannels;c++)chs.push(b.getChannelData(c));
+    const th=.0015,loud=i=>{for(const d of chs)if(Math.abs(d[i])>th)return true;return false};
+    let s=0;const sMax=Math.min(n,sr*2);while(s<sMax&&!loud(s))s++;if(s>=sMax)s=0;
+    let e=n-1;const eMin=Math.max(s+1,n-sr*6);while(e>eMin&&!loud(e))e--;if(e<=eMin)e=n-1;
+    return{s:s/sr,e:(e+1)/sr};
+  }
+  function decode(t){
+    if(t==null||failed[t]||mode!=='wa'||!actx||buf[t]||bufP[t])return;
+    bufP[t]=fetchRaw(t).then(ab=>new Promise((res,rej)=>{const p=actx.decodeAudioData(ab.slice(0),res,rej);if(p&&p.then)p.then(res,rej)}))
+      .then(b=>{buf[t]=b;loopPts[t]=findLoop(b)}).catch(()=>{if(mode==='wa'&&!buf[t])failed[t]=true}).then(()=>{bufP[t]=null});
+  }
+  function getEl(t){let e=els[t];if(!e){e=new Audio();e.preload='auto';e.loop=true;e.volume=0;e.addEventListener('error',()=>{failed[t]=true});e.src=MUSIC_TRACKS[t];els[t]=e;try{e.load()}catch(_){}}return e}
+  function ensureBus(){if(!bus&&actx){bus=actx.createGain();bus.gain.value=0;busTarget=0;bus.connect(actx.destination)}return bus}
+  function setBus(target,tau){
+    if(mode==='wa'){if(bus&&Math.abs(target-busTarget)>1e-4){const t=actx.currentTime;bus.gain.cancelScheduledValues(t);bus.gain.setTargetAtTime(target,t,tau||.08);busTarget=target}}
+    else busTarget=target;
+  }
+  function mkVoice(t,dur){const v={t,g:0,ap:-1,fade:null,pending:true,retire:false,retireAt:0,rdur:XF_LEVEL,dur,src:null,node:null,el:null,pos:0};voices.push(v);return v}
+  function fadeTo(v,to,dur,stop){v.fade={from:v.g,to,t0:now(),dur:Math.max(.05,dur),stop:!!stop}}
+  function waPlay(v,off){const L=loopPts[v.t],s=actx.createBufferSource();s.buffer=buf[v.t];s.loop=true;s.loopStart=L.s;s.loopEnd=L.e;s.connect(v.node);s.start(0,off);v.src=s;v.st=actx.currentTime;v.off=off}
+  function waPos(v){const L=loopPts[v.t];let p=v.off+(actx.currentTime-v.st);if(p>=L.e)p=L.s+((p-L.s)%(L.e-L.s));return p}
+  function startVoice(v){
+    if(mode==='wa'){if(!buf[v.t]||!ensureBus())return false;v.node=actx.createGain();v.node.gain.value=0;v.node.connect(bus);waPlay(v,loopPts[v.t].s)}
+    else{const e=getEl(v.t);v.el=e;try{e.currentTime=0}catch(_){}e.volume=0;const p=e.play();if(p&&p.catch)p.catch(()=>{})}
+    v.pending=false;v.ap=-1;return true;
+  }
+  function killVoice(v){
+    try{if(v.src){v.src.stop();v.src.disconnect()}}catch(_){}try{if(v.node)v.node.disconnect()}catch(_){}
+    if(v.el){try{v.el.pause();v.el.volume=0;v.el.currentTime=0}catch(_){}}
+    v.src=v.node=v.el=null;voices=voices.filter(x=>x!==v);
+  }
+  function apply(v){
+    if(Math.abs(v.g-v.ap)<.002)return;v.ap=v.g;
+    if(v.node)v.node.gain.setTargetAtTime(v.g,actx.currentTime,.02);
+  }
+  function switchTo(t,dur){
+    cur=t;let inV=null;const n=now();
+    for(const v of voices.slice()){
+      if(t!==null&&v.t===t&&!inV){inV=v;v.retire=false;if(v.pending)v.dur=dur;else fadeTo(v,1,dur)}
+      else if(!v.retire){if(v.pending){killVoice(v);continue}v.retire=true;v.retireAt=n;v.rdur=dur;v.fade=null}
+    }
+    if(t!==null&&!inV)mkVoice(t,dur);
+  }
+  function pauseAll(){
+    if(paused)return;paused=true;
+    for(const v of voices.slice()){
+      if(v.retire){killVoice(v);continue}
+      if(v.pending)continue;
+      if(v.fade){v.g=v.fade.to;v.fade=null}
+      if(v.src){v.pos=waPos(v);try{v.src.stop();v.src.disconnect()}catch(_){}v.src=null}
+      if(v.el){try{v.el.pause()}catch(_){}}
+    }
+  }
+  function resumeAll(){
+    paused=false;
+    for(const v of voices){
+      if(v.pending)continue;
+      if(v.node&&!v.src&&buf[v.t]){waPlay(v,v.pos||loopPts[v.t].s);const t=actx.currentTime;v.node.gain.cancelScheduledValues(t);v.node.gain.setValueAtTime(v.g,t);v.ap=v.g}
+      if(v.el){const p=v.el.play();if(p&&p.catch)p.catch(()=>{})}
+    }
+  }
+  function duckNow(){
+    if(mode==='wa'&&bus){const t=actx.currentTime;bus.gain.cancelScheduledValues(t);bus.gain.setTargetAtTime(0,t,.03);busTarget=0}
+    else pauseAll();
+    setTimeout(()=>{if(document.hidden||adDucked)pauseAll()},350);
+  }
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)duckNow()});
+  function desired(){
+    if(!musicOn||vol<=0)return{t:null,p:false};
+    switch(state){
+      case'play':return{t:musicTrackFor(stage),p:false};
+      case'pause':return{t:musicTrackFor(stage),p:true};
+      case'achievements':return _achFrom==='pause'?{t:musicTrackFor(stage),p:true}:{t:null,p:false};
+      case'stageclear':case'briefing':return{t:musicTrackFor(Math.min(MAX_STAGES,stage+1)),p:false};
+      default:return{t:null,p:false};
+    }
+  }
+  function preload(){
+    let nx=null;
+    if(state==='play'||state==='pause')nx=stage<MAX_STAGES?musicTrackFor(stage+1):null;
+    else if(state!=='gameover'&&state!=='victory'&&state!=='stageclear'&&state!=='briefing')nx=musicTrackFor(1);
+    if(!musicOn||vol<=0)return;
+    if(mode==='wa'){
+      if(nx!==null&&!failed[nx]&&!raw[nx])fetchRaw(nx).catch(()=>{});
+      if(!actx)return;
+      if(cur!==null&&!buf[cur])decode(cur);else if(nx!==null)decode(nx);
+      const keep=new Set([cur,nx]);for(const v of voices)keep.add(v.t);
+      for(let i=0;i<buf.length;i++)if(buf[i]&&!keep.has(i)){buf[i]=null}
+    }else if(nx!==null&&!failed[nx])getEl(nx);
+  }
+  function update(){
+    const n=now(),dt=Math.min(.25,Math.max(0,n-(lastN||n)));lastN=n;
+    if(n-lastPre>.5){lastPre=n;try{preload()}catch(_){}}
+    if(mode==='wa'&&!actx)return;
+    if(mode==='wa')ensureBus();
+    const d=desired();
+    const wantPause=d.p||adDucked||document.hidden;
+    if(!wantPause&&paused)resumeAll();
+    if(d.t!==cur){
+      let dur;
+      if(d.t===null)dur=(state==='gameover'||state==='victory')?XF_END:(!musicOn||vol<=0)?XF_TOGGLE:XF_MENU;
+      else dur=voices.some(v=>!v.pending&&!v.retire)||voices.some(v=>v.retire)?XF_LEVEL:XF_START;
+      switchTo(d.t,dur);
+    }
+    setBus(wantPause?0:vol*MUSIC_LEVEL);
+    busEl+=(busTarget-busEl)*Math.min(1,dt/.1);
+    if(wantPause){if(!duckAt)duckAt=n;if(!paused&&n-duckAt>.4)pauseAll()}else duckAt=0;
+    if(paused)return;
+    for(const v of voices.slice()){
+      if(v.pending&&!v.retire){
+        if(failed[v.t]){killVoice(v);continue}
+        if(mode==='wa')decode(v.t);
+        if(startVoice(v))fadeTo(v,1,v.dur||XF_LEVEL);
+      }
+    }
+    const waiting=voices.some(v=>v.pending&&!v.retire&&!failed[v.t]);
+    for(const v of voices)if(v.retire&&!(v.fade&&v.fade.stop)&&(!waiting||n-v.retireAt>4))fadeTo(v,0,v.rdur,true);
+    for(const v of voices.slice()){
+      const f=v.fade;
+      if(f){const p=Math.min(1,(n-f.t0)/f.dur);v.g=f.from+(f.to-f.from)*(f.to>f.from?shIn(p):shOut(p));if(p>=1){v.g=f.to;v.fade=null;if(f.stop){killVoice(v);continue}}}
+      if(v.node)apply(v);
+      else if(v.el){const vv=Math.max(0,Math.min(1,v.g*busEl));if(Math.abs(v.el.volume-vv)>.002)v.el.volume=vv}
+    }
+  }
+  function setAd(on){
+    adOn=!!on;clearTimeout(adT);
+    if(adOn)adT=setTimeout(()=>{if(adOn){adDucked=true;duckNow()}},150);
+    else adDucked=false;
+  }
+  function chipFallback(){return state==='play'&&cur!==null&&!!failed[cur]}
+  try{Object.defineProperty(window,'SkyMusic',{value:Object.freeze({status:()=>({mode,cur,paused,bus:busTarget,voices:voices.map(v=>({track:v.t+1,gain:+v.g.toFixed(3),pending:v.pending,retire:v.retire})),decoded:MUSIC_TRACKS.map((_,i)=>!!buf[i]),failed:MUSIC_TRACKS.map((_,i)=>!!failed[i])})})})}catch(_){}
+  return{update,setAd,chipFallback};
+})();
+function chipMusic(dt){if(!musicOn||!actx||state!=='play')return;mTimer+=dt;if(mTimer>.13){mTimer=0;const n=mel[mStep%mel.length],b=bas[mStep%bas.length];if(n!==undefined)tone(220*Math.pow(2,n/12),.11,'square',.018);if(mStep%2===0)tone(110*Math.pow(2,b/12),.16,'triangle',.022);mStep++}}
+function music(dt){try{Music.update()}catch(e){}if(Music.chipFallback())chipMusic(dt)}
 
 const PLANES=[
 {id:0,name:'FALCON',spd:2.55,hp:3,sh:3,bm:2,wpn:0,desc:'Balanced starter fighter',cost:0},
@@ -350,9 +539,9 @@ function showAchievements(){
     return `<div class="ach-item ${on?'on':'off'}"><div class="ach-name">${on?a.name:'???'}</div><div class="ach-desc">${a.desc}</div>${when}</div>`;
   }).join('');
   const nOn=ACHIEVEMENTS.filter(a=>isAchUnlocked(a.id)).length;
-  overlay.innerHTML=`<div class="panel"><h2>ACHIEVEMENTS</h2>
-<p style="font-size:calc(var(--sc,3)*4.5px);color:#a0a0c0;margin-bottom:6px">${nOn} / ${ACHIEVEMENTS.length} unlocked</p>
-<div class="ach-list">${items}</div>
+  overlay.innerHTML=`<div class="panel fill"><h2>ACHIEVEMENTS</h2>
+<p style="font-size:calc(var(--sc,3)*4.5px);color:#a0a0c0;margin-bottom:6px;max-width:none">${nOn} / ${ACHIEVEMENTS.length} unlocked</p>
+<div class="ach-list scroll-box">${items}</div>
 <p style="margin-top:10px"><span class="btn" id="ach-back">BACK</span></p>
 <p class="blink">ESC / BACK</p></div>`;
   bindBtn('ach-back',achievementsBack);
@@ -372,7 +561,7 @@ function upCost(u){const lv=meta.up[u.id]||0;return Math.floor(u.cost*(1+lv*.6))
 function isUn(id){return meta.un.map(Number).includes(Number(id))}
 function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function yesterdayStr(){const d=new Date();d.setDate(d.getDate()-1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function dailyRewardAmt(streak){return 500+Math.min(7,streak)*150+(streak>=7?500:0)}
+function dailyRewardAmt(streak){return 280+Math.min(7,streak)*85+(streak>=7?280:0)} /* v0.3.12 economy: was 500+min(7,s)*150+(s>=7?500:0) */
 let _dailyClaimed=null;
 function checkDailyLogin(){
   const today=todayStr();
@@ -770,6 +959,8 @@ function showCredits(){
 <span style="color:#8080a0">v${GAME_VERSION}</span><br><br>
 <span style="color:#80ff80">Created by</span><br>
 <b style="color:#ffffa0;font-size:calc(var(--sc,3)*5.5px)">Arthur McConnell</b><br><br>
+<span style="color:#80ff80">Music</span><br>
+<span style="color:#c0c0e0">Edgard Jaude</span><br><br>
 <span style="color:#9090b0">Procedural stages · Hangar unlocks<br>
 Graze · Charge · Boss phases · Ranks</span>
 </p>
@@ -778,15 +969,21 @@ Graze · Charge · Boss phases · Ranks</span>
   bindBtn('c-back',()=>{showMenu._skipDaily=true;showMenu()});
 }
 function showShop(){state='shop';hSel=meta.sel;shopTab=0;rShop()}
+let _shopMsg='';
 function rShop(){
-  const p=PLANES[hSel],un=isUn(p.id);
+  const p=PLANES[hSel]||PLANES[0],un=isUn(p.id);
+  /* keep gamepad focus + list scroll across re-render */
+  const prevFocus=gpFocus,prevScroll=(overlay.querySelector('.up-list')||{}).scrollTop||0,msg=_shopMsg;_shopMsg='';
   const ships=PLANES.map((pl,i)=>`<span class="btn ${i===hSel&&shopTab===0?'sel':''} ${isUn(pl.id)?'':'locked'}" data-ship="${i}">${isUn(pl.id)?pl.name:'???'}</span>`).join('');
   const ups=UPGS.map((u,i)=>{
-    const lv=meta.up[u.id]||0,cost=upCost(u),maxed=lv>=u.max;
-    return `<div style="margin:4px 0;font-size:calc(var(--sc,3)*4.2px)"><span class="btn ${shopTab===1&&i===hSel?'sel':''}" data-up="${i}">${u.name}</span> Lv${lv}/${u.max} ${maxed?'<span style="color:#80ff80">MAX</span>':cost+' cr'}</div>`;
+    const lv=meta.up[u.id]||0,cost=upCost(u),maxed=lv>=u.max,poor=!maxed&&meta.cr<cost;
+    const pips='■'.repeat(lv)+'□'.repeat(Math.max(0,u.max-lv));
+    const btn=maxed?`<span class="btn up-buy locked" id="buy-up-${i}">MAX</span>`
+      :`<span class="btn up-buy${poor?' poor':''}" id="buy-up-${i}" data-buy="${i}">BUY<small>${cost} cr</small></span>`;
+    return `<div class="up-row ${shopTab===1&&i===hSel?'sel':''}" data-up="${i}"><div class="up-info"><div class="up-name">${u.name}<span class="up-lv">Lv ${lv}/${u.max}</span></div><div class="up-desc">${u.desc}</div><div class="up-pips">${pips}</div></div>${btn}</div>`;
   }).join('');
   showOv();
-  overlay.innerHTML=`<div class="panel"><h2>HANGAR</h2>
+  overlay.innerHTML=`<div class="panel${shopTab===1?' fill':''}"><h2>HANGAR</h2>
 <p>Credits: <b style="color:#80ff80">${meta.cr}</b></p>
 <p style="margin:6px 0"><span class="btn ${shopTab===0?'sel':''}" id="tab-ships">SHIPS</span> <span class="btn ${shopTab===1?'sel':''}" id="tab-up">UPGRADES</span></p>
 ${shopTab===0?`<div style="margin:8px 0">${ships}</div>
@@ -795,31 +992,43 @@ ${un?`<span style="color:#a0a0c0">${p.desc}</span><br>SPD ${p.spd} · HP ${p.hp}
 <p style="margin-top:8px">${!un&&meta.cr>=p.cost?'<span class="btn" id="buy-ship">BUY</span>':''}
 ${un?'<span class="btn" id="sel-ship">SELECT</span>':''}
 <span class="btn" id="shop-start">▶ START</span>
-<span class="btn" id="shop-back">BACK</span></p>`:
-`<div style="margin:4px 0;text-align:left;max-height:calc(var(--sc,3)*42px);overflow-y:auto;padding:2px 4px;border:1px solid #303050">${ups}</div>
-<p style="font-size:calc(var(--sc,3)*4.2px);color:#a0a0c0;margin-top:6px">${UPGS[Math.min(hSel,UPGS.length-1)].desc}</p>
-<p style="margin-top:8px"><span class="btn" id="buy-up">BUY</span>
-<span class="btn" id="shop-start">▶ START</span>
-<span class="btn" id="shop-back">BACK</span></p>`}
-<p class="blink">←→ select · TAB switch · ESC back</p></div>`;
+<span class="btn" id="shop-back">BACK</span></p>
+<p class="blink">←→ select · TAB switch · ESC back</p>`:
+`<div class="scroll-box up-list">${ups}</div>
+<div class="shop-msg">${msg}</div>
+<p style="margin-top:4px"><span class="btn" id="shop-start">▶ START</span>
+<span class="btn" id="shop-back">BACK</span></p>
+<p class="blink" style="font-size:max(10px,calc(var(--sc,3)*3.8px))">↑↓ select · ENTER/B buy · TAB switch · ESC back</p>`}</div>`;
   overlay.querySelectorAll('[data-ship]').forEach(el=>{el.onmousedown=e=>e.stopPropagation();el.onclick=()=>{hSel=+el.dataset.ship;shopTab=0;rShop()}});
-  overlay.querySelectorAll('[data-up]').forEach(el=>{el.onmousedown=e=>e.stopPropagation();el.onclick=()=>{hSel=+el.dataset.up;shopTab=1;rShop()}});
+  overlay.querySelectorAll('.up-row[data-up]').forEach(el=>{el.onmousedown=e=>e.stopPropagation();el.onclick=()=>{hSel=+el.dataset.up;shopTab=1;rShop()}});
+  /* BUY buttons: click only (a touch that scrolls the list must not buy) */
+  overlay.querySelectorAll('.up-buy').forEach(el=>{
+    const i=+String(el.id).replace('buy-up-','');
+    el.onmousedown=e=>{e.stopPropagation()};
+    el.ontouchstart=e=>{e.stopPropagation()};
+    el.onclick=e=>{e.preventDefault();e.stopPropagation();withUiLock(()=>{hSel=i;shopTab=1;buyUp()})};
+  });
   bindBtn('tab-ships',()=>{shopTab=0;hSel=meta.sel;rShop()});
   bindBtn('tab-up',()=>{shopTab=1;hSel=0;rShop()});
   bindBtn('buy-ship',buyShip);
   bindBtn('sel-ship',()=>{if(isUn(PLANES[hSel].id)){meta.sel=PLANES[hSel].id;saveM();rShop()}});
-  bindBtn('buy-up',buyUp);
   bindBtn('shop-start',startGame);
   bindBtn('shop-back',()=>{showMenu._skipDaily=true;showMenu()});
+  const list=overlay.querySelector('.up-list');
+  if(list){list.scrollTop=prevScroll;const selRow=list.querySelector('.up-row.sel');if(selRow&&rShop._scrollSel){try{selRow.scrollIntoView({block:'nearest'})}catch(e){}}}
+  rShop._scrollSel=false;
+  if(prevFocus>0&&rShop._keepFocus){const btns=gpMenuBtns();if(prevFocus<btns.length){gpFocus=prevFocus;gpBtnCount=btns.length;if(gp.connected)gpApplyFocus()}}
+  rShop._keepFocus=false;
 }
 function shopKey(c){
   if(c==='Tab'){shopTab=shopTab?0:1;hSel=0;rShop();return}
-  if(c==='ArrowLeft'||c==='KeyA'){hSel=shopTab===0?(hSel+4)%5:(hSel+UPGS.length-1)%UPGS.length;rShop()}
-  if(c==='ArrowRight'||c==='KeyD'){hSel=shopTab===0?(hSel+1)%5:(hSel+1)%UPGS.length;rShop()}
-  if(c==='KeyB'){if(shopTab===0)buyShip();else buyUp()}
+  const n=shopTab===0?PLANES.length:UPGS.length;
+  if(c==='ArrowLeft'||c==='KeyA'||(shopTab===1&&(c==='ArrowUp'||c==='KeyW'))){hSel=(hSel+n-1)%n;rShop._scrollSel=true;rShop()}
+  if(c==='ArrowRight'||c==='KeyD'||(shopTab===1&&(c==='ArrowDown'||c==='KeyS'))){hSel=(hSel+1)%n;rShop._scrollSel=true;rShop()}
+  if(c==='KeyB'||(shopTab===1&&(c==='Enter'||c==='NumpadEnter'))){if(shopTab===0)buyShip();else buyUp()}
 }
 function buyShip(){const p=PLANES[hSel];if(isUn(p.id)||meta.cr<p.cost)return;meta.cr-=p.cost;meta.un.push(p.id);meta.sel=p.id;saveM();const got=unlockAch('hangar_ship');if(!got)try{SFX.unlock()}catch(e){}rShop()}
-function buyUp(){const u=UPGS[hSel];if(!u)return;const lv=meta.up[u.id]||0;if(lv>=u.max)return;const cost=upCost(u);if(meta.cr<cost)return;meta.cr-=cost;meta.up[u.id]=lv+1;saveM();try{SFX.unlock()}catch(e){}rShop()}
+function buyUp(){const u=UPGS[hSel];if(!u)return;const lv=meta.up[u.id]||0;rShop._keepFocus=true;if(lv>=u.max){_shopMsg=u.name+' is maxed';rShop();return}const cost=upCost(u);if(meta.cr<cost){_shopMsg='Need '+(cost-meta.cr)+' more credits for '+u.name;rShop();return}meta.cr-=cost;meta.up[u.id]=lv+1;saveM();_shopMsg='<span style="color:#80ff80">'+u.name+' upgraded to Lv '+(lv+1)+'</span>';try{SFX.unlock()}catch(e){}rShop()}
 function showHangar(){showShop()}
 
 function rect(x,y,w,h,c){X.fillStyle=c;X.fillRect(x|0,y|0,w,h)}
@@ -957,7 +1166,7 @@ function killB(){
   boom(bx,by,true);flash=16;shake=20;hitstop=12;
   floatTxt(bx-30,by-20,'BOSS DEFEATED!','#ffff40');
   boss=null;bossOn=false;const rank=cRank();
-  const g=Math.floor(score*.02)+stage*55;meta.cr+=g;runBest=betterRank(rank,runBest);
+  const g=Math.floor(score*.011)+stage*30;meta.cr+=g; /* v0.3.12 economy: was score*.02+stage*55 */runBest=betterRank(rank,runBest);
   if(!meta.best||rank==='S'||(meta.best!=='S'&&rank==='A'))meta.best=rank;saveM();
   _clearInfo={stage,theme:theme.n,score,rank,graze,credits:g,noDmg};
   SFX.clear();UI();
@@ -971,12 +1180,16 @@ function killB(){
   else showStageClear();
 }
 function cRank(){const b=score-sScore,g=graze;if(noDmg&&g>40&&b>8000)return'S';if(noDmg||(g>25&&b>5000))return'A';if(b>3000||g>15)return'B';return'C'}
-function hurt(){if(inv>0)return;noDmg=false;if(shield>0){shield--;inv=diff===0?78:55;SFX.hurt();shake=7;hitstop=4;flash=4;UI();return}lives--;inv=diff===0?130:95;boom(pl.x+10,pl.y+6,true);SFX.hurt();shake=12;hitstop=7;flash=8;combo=1;UI();if(lives<=0){state='gameover';const rank=cRank();saveHS(score,rank);const g=Math.floor(score*.015);meta.cr+=g;saveM();const continueHtml=adContinueUsed?'':`<p style="margin-top:8px"><span class="btn ad" id="ad-continue-btn" disabled>WATCH AD FOR CONTINUE</span></p><div class="ad-status" id="ad-continue-status"></div>`;ovHTML('GAME OVER',`<p>Final Score<br><b style="font-size:calc(var(--sc,3)*7px);color:#ffff80">${String(score).padStart(6,'0')}</b><br>Rank ${rank}<br>+${g} credits</p>${continueHtml}<p style="margin-top:10px"><span class="btn" id="go-menu">MENU</span> <span class="btn" id="go-shop">HANGAR</span></p><p class="blink">SPACE — menu</p><div class="scores">${loadHS().map((e,i)=>`${i+1}. ${String(e.s).padStart(6,'0')} ${e.r||''}`).join('<br>')}</div>`);bindBtn('go-menu',()=>{showMenu._skipDaily=true;showMenu()});bindBtn('go-shop',showShop);wireAdContinueBtn()}}
+function hurt(){if(inv>0)return;noDmg=false;if(shield>0){shield--;inv=diff===0?78:55;SFX.hurt();shake=7;hitstop=4;flash=4;UI();return}lives--;inv=diff===0?130:95;boom(pl.x+10,pl.y+6,true);SFX.hurt();shake=12;hitstop=7;flash=8;combo=1;UI();if(lives<=0){state='gameover';const rank=cRank();saveHS(score,rank);const g=Math.floor(score*.008);meta.cr+=g;saveM();const continueHtml=(adContinueUsed||!adsInRunHost())?'':`<span class="btn ad" id="ad-continue-btn" disabled>WATCH AD FOR CONTINUE</span><div class="ad-status" id="ad-continue-status"></div>`;showOv();overlay.innerHTML=`<div class="briefing-paper report"><span class="briefing-stamp">FAILED</span><div class="briefing-header">MISSION REPORT</div><h2 class="briefing-title">GAME OVER</h2><div class="briefing-theme">Stage ${stage} · ${theme.n}</div><div class="briefing-stats">Final Score<br><b style="font-size:1.35em">${String(score).padStart(6,'0')}</b><br>Rank <b style="color:#8a2020;font-size:1.2em">${rank}</b><br>Credits <b style="color:#206020">+${g}</b> · Total ${meta.cr}</div><div class="scores" style="margin:6px 0"><b>HIGH SCORES</b><br>${loadHS().map((e,i)=>`${i+1}. ${String(e.s).padStart(6,'0')} ${e.r||''}`).join('<br>')}</div><div class="briefing-actions">${continueHtml}<span class="btn" id="go-menu">MENU</span> <span class="btn" id="go-shop">HANGAR</span><p class="briefing-hint blink">SPACE — menu</p></div></div>`;bindBtn('go-menu',()=>{showMenu._skipDaily=true;showMenu()});bindBtn('go-shop',showShop);wireAdContinueBtn()}}
 
 
-function skyAds(){try{return window.SkyAds||null}catch(_){return null}}
-async function tryRewardedAd(placement){try{const ads=skyAds();if(!ads||typeof ads.showRewarded!=='function')return false;return !!(await ads.showRewarded(placement))}catch(_){return false}}
-async function tryInterstitialAd(placement){try{const ads=skyAds();if(!ads||typeof ads.showInterstitial!=='function')return false;return !!(await ads.showInterstitial(placement))}catch(_){return false}}
+/* Ads only inside the RUN host (native app webview / RUN web iframe). Outside RUN (Pages, Game Jolt,
+   itch, local) the SDK would show a mock "Interstitial Ad" box, so every ad call is a no-op there and
+   rewarded-ad buttons are not rendered (no free rewards without a real ad). See rundot-ads-entry.mjs. */
+function adsInRunHost(){try{const a=window.SkyAds;return !!(a&&typeof a.isRunHost==='function'&&a.isRunHost())}catch(_){return false}}
+function skyAds(){try{return adsInRunHost()?(window.SkyAds||null):null}catch(_){return null}}
+async function tryRewardedAd(placement){try{const ads=skyAds();if(!ads||typeof ads.showRewarded!=='function')return false;try{Music.setAd(true)}catch(_){}try{return !!(await ads.showRewarded(placement))}finally{try{Music.setAd(false)}catch(_){}}}catch(_){return false}}
+async function tryInterstitialAd(placement){try{const ads=skyAds();if(!ads||typeof ads.showInterstitial!=='function')return false;try{Music.setAd(true)}catch(_){}try{return !!(await ads.showInterstitial(placement))}finally{try{Music.setAd(false)}catch(_){}}}catch(_){return false}}
 async function maybeShowStageInterstitial(){try{if(stage<2)return;if(stage===lastInterstitialStage)return;if(stage%2!==0)return;if(stage>=MAX_STAGES)return;lastInterstitialStage=stage;await tryInterstitialAd({adDisplayId:'stage_transition',adDisplayName:'Stage Transition'})}catch(_){}}
 function grantAdContinue(){lives=Math.max(1,lives+1);inv=diff===0?150:120;shield=Math.max(shield,1);state='play';hideOv();UI();try{banner('CONTINUE',70)}catch(e){}}
 function grantAdBomb(){bombs=Math.min(5,bombs+1);UI();try{banner('+1 BOMB',50)}catch(e){}}
@@ -1005,7 +1218,9 @@ function showStageClear(){
   state='stageclear';showOv();
   adBombUsedThisBreak=false;
   const info=_clearInfo||{stage,theme:theme.n,score,rank:cRank(),graze,credits:0,noDmg};
-  overlay.innerHTML=`<div class="briefing-paper">
+  const adBombHtml=adsInRunHost()?`<span class="btn ad" id="ad-bomb-btn" disabled>WATCH AD FOR +1 BOMB</span>
+<div class="ad-status" id="ad-bomb-status"></div>`:'';
+  overlay.innerHTML=`<div class="briefing-paper report">
 <span class="briefing-stamp">CLEAR</span>
 <div class="briefing-header">MISSION REPORT</div>
 <h2 class="briefing-title">STAGE ${info.stage} CLEAR</h2>
@@ -1014,8 +1229,7 @@ function showStageClear(){
 Rank <b style="color:#8a2020;font-size:1.25em">${info.rank}</b>${info.noDmg?' · <span style="color:#206020">NO DAMAGE</span>':''}<br>
 Graze ${info.graze} · Credits <b style="color:#206020">+${info.credits}</b></div>
 <div class="briefing-actions">
-<span class="btn ad" id="ad-bomb-btn" disabled>WATCH AD FOR +1 BOMB</span>
-<div class="ad-status" id="ad-bomb-status"></div>
+${adBombHtml}
 <span class="btn briefing-go" id="sc-continue">CONTINUE</span>
 <p class="briefing-hint blink">SPACE / CONTINUE</p>
 </div></div>`;
@@ -1056,10 +1270,10 @@ function showVictory(){
   try{unlockAch('first_clear');unlockAch('victory')}catch(e){}
   const rank=runBest||(_clearInfo&&_clearInfo.rank)||cRank();
   saveHS(score,rank);
-  const g=Math.floor(score*.025)+400;meta.cr+=g;
+  const g=Math.floor(score*.014)+220;meta.cr+=g; /* was score*.025+400 */
   if(!meta.best||(RANK_ORD[rank]||0)>(RANK_ORD[meta.best]||0))meta.best=rank;saveM();
   const hs=loadHS().map((e,i)=>`${i+1}. ${String(e.s).padStart(6,'0')} ${e.r||''}`).join('<br>')||'No scores yet';
-  overlay.innerHTML=`<div class="briefing-paper">
+  overlay.innerHTML=`<div class="briefing-paper report">
 <span class="briefing-stamp">VICTORY</span>
 <div class="briefing-header">CAMPAIGN COMPLETE</div>
 <h2 class="briefing-title">VICTORY</h2>
@@ -1067,7 +1281,7 @@ function showVictory(){
 <div class="briefing-stats">Final Score<br><b style="font-size:1.35em">${String(score).padStart(6,'0')}</b><br>
 Best Rank <b style="color:#8a2020">${rank}</b><br>
 Credits <b style="color:#206020">+${g}</b> · Total ${meta.cr}</div>
-<div class="scores" style="color:#4a3a20;margin:8px 0;font-size:calc(var(--sc,3)*4px)"><b>HIGH SCORES</b><br>${hs}</div>
+<div class="scores" style="margin:8px 0"><b>HIGH SCORES</b><br>${hs}</div>
 <div class="briefing-actions">
 <span class="btn" id="vic-menu">MENU</span>
 <span class="btn" id="vic-shop">HANGAR</span>
